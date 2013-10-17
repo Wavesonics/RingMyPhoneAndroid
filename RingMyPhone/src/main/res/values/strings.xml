@@ -3,7 +3,10 @@
 
     <string name="app_name">RingMyPhone</string>
     <string name="action_settings">Settings</string>
-    <string name="welcome">Welcome to RingMyPhone! You don\'t need to do anything here, just close this and use your Pebble to start your phone ringing.</string>
+    <string name="stop_description">Maybe you lost you\'re watch after ringing your phone, maybe other things, use this to silence your phone!</string>
+    <string name="welcome_title">Welcome to RingMyPhone!</string>
+    <string name="welcome_body">You don\'t need to do anything here, just close this and use your Pebble to start your phone ringing.</string>
     <string name="stop_button">Stop Ringing!</string>
+    <string name="stop_button_response">Stopping Ringer...</string>
 
 </resources>
