@@ -44,24 +44,31 @@ public class MainActivity extends Activity
         stopService( new Intent( this, RingerService.class ) );
 	}
 
+    public void onInstallClicked( View v )
+    {
+        Log.i( TAG, "Stopping RingerService" );
+
+    }
+
     private class MenuAdapter extends BaseAdapter
     {
         private static final int TYPE_INVALID = -1;
         private static final int TYPE_WELCOME = 0;
         private static final int TYPE_STOP = 1;
-        private static final int N_TYPES = 2;
+        private static final int TYPE_INSTALL = 2;
+        private static final int N_TYPES = 3;
 
-        public boolean areAllItemsEnabled ()
+        public boolean areAllItemsEnabled()
         {
             return false;
         }
 
-        public boolean isEnabled (int position)
+        public boolean isEnabled(int position)
         {
             return false;
         }
 
-        public int getCount ()
+        public int getCount()
         {
             return N_TYPES;
         }
@@ -95,6 +102,9 @@ public class MainActivity extends Activity
                     case TYPE_STOP:
                         view = inflater.inflate( R.layout.row_stop_ringing, parent, false );
                         break;
+                    case TYPE_INSTALL:
+                        view = inflater.inflate( R.layout.row_install_watch_app, parent, false );
+                        break;
                     default:
                         view = null;
                         break;
@@ -119,6 +129,9 @@ public class MainActivity extends Activity
                     break;
                 case 1:
                     type = TYPE_STOP;
+                    break;
+                case 2:
+                    type = TYPE_INSTALL;
                     break;
                 default:
                     type = TYPE_INVALID;
