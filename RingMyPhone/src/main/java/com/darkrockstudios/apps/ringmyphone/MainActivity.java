@@ -2,14 +2,27 @@ package com.darkrockstudios.apps.ringmyphone;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Environment;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.View;
 import android.view.ViewGroup;
+import android.webkit.MimeTypeMap;
 import android.widget.BaseAdapter;
 import android.widget.ListView;
+import android.widget.Toast;
+
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
 
 import de.keyboardsurfer.android.widget.crouton.Configuration;
 import de.keyboardsurfer.android.widget.crouton.Crouton;
@@ -46,8 +59,109 @@ public class MainActivity extends Activity
 
     public void onInstallClicked( View v )
     {
-        Log.i( TAG, "Stopping RingerService" );
+        Log.i( TAG, "Installing Pebble App" );
 
+        PebbleAppInstaller installerTask = new PebbleAppInstaller();
+        installerTask.execute();
+    }
+
+    private class PebbleAppInstaller extends AsyncTask< Void, Integer, Void >
+    {
+        @Override
+        protected Void doInBackground(Void... params)
+        {
+            if( copyRawFileToExternalStorage( R.raw.ringmyphone ) )
+            {
+                installPebbleApp();
+            }
+
+            return null;
+        }
+
+        private boolean installPebbleApp()
+        {
+            File path = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
+            File file = new File(path, "RingMyPhone.pbw");
+
+            MimeTypeMap mimeTypeMap = MimeTypeMap.getSingleton();
+            String mimeType = mimeTypeMap.getMimeTypeFromExtension( "pbw" );
+
+            Intent newIntent = new Intent(android.content.Intent.ACTION_VIEW);
+
+            newIntent.setDataAndType(Uri.fromFile(file),mimeType);
+            newIntent.setFlags(newIntent.FLAG_ACTIVITY_NEW_TASK);
+            try
+            {
+                startActivity(newIntent);
+            }
+            catch (android.content.ActivityNotFoundException e)
+            {
+                e.printStackTrace();
+                //Toast.makeText(MainActivity.this, "No handler for this type of file.", 4000).show();
+            }
+
+            return true;
+        }
+
+        private boolean copyRawFileToExternalStorage(int resId)
+        {
+            boolean success = false;
+
+            if( isExternalStorageWritable() )
+            {
+                File path = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
+                File file = new File(path, "RingMyPhone.pbw");
+
+                try
+                {
+                    path.mkdirs();
+
+                    InputStream is = getResources().openRawResource(resId);
+                    OutputStream os = new FileOutputStream(file);
+
+                    byte[] data = new byte[is.available()];
+                    is.read(data);
+                    os.write(data);
+                    is.close();
+                    os.close();
+
+                    success = true;
+                }
+                catch(IOException e)
+                {
+                    e.printStackTrace();
+                }
+            }
+            return success;
+        }
+
+        private boolean isExternalStorageWritable()
+        {
+            boolean externalStorageAvailable = false;
+            boolean externalStorageWriteable = false;
+
+            String state = Environment.getExternalStorageState();
+
+            if (Environment.MEDIA_MOUNTED.equals(state))
+            {
+                // We can read and write the media
+                externalStorageAvailable = externalStorageWriteable = true;
+            }
+            else if (Environment.MEDIA_MOUNTED_READ_ONLY.equals(state))
+            {
+                // We can only read the media
+                externalStorageAvailable = true;
+                externalStorageWriteable = false;
+            }
+            else
+            {
+                // Something else is wrong. It may be one of many other states, but all we need
+                //  to know is we can neither read nor write
+                externalStorageAvailable = externalStorageWriteable = false;
+            }
+
+            return externalStorageAvailable && externalStorageWriteable;
+        }
     }
 
     private class MenuAdapter extends BaseAdapter
