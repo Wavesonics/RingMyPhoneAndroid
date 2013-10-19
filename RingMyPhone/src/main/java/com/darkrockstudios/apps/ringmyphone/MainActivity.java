@@ -83,8 +83,7 @@ public class MainActivity extends Activity
             File path = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
             File file = new File(path, "RingMyPhone.pbw");
 
-            MimeTypeMap mimeTypeMap = MimeTypeMap.getSingleton();
-            String mimeType = mimeTypeMap.getMimeTypeFromExtension( "pbw" );
+            String mimeType = "application/octet-stream";
 
             Intent newIntent = new Intent(android.content.Intent.ACTION_VIEW);
 
