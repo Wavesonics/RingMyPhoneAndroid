@@ -10,5 +10,7 @@
     <string name="stop_description">Maybe you lost you\'re watch after ringing your phone, maybe other things, use this to silence your phone!</string>
     <string name="install_watch_app_button">Install Phone App</string>
     <string name="install_watch_app_description">Download the latest watch app and install it to your Pebble</string>
+    <string name="install_watch_app_failed_pebble">Pebble App not found. Could not complete install.</string>
+    <string name="install_watch_app_failed_storage">External storage not available. Could not complete install.</string>
 
 </resources>

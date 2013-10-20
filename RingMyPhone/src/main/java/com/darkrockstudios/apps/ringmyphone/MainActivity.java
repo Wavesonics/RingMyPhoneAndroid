@@ -65,21 +65,58 @@ public class MainActivity extends Activity
         installerTask.execute();
     }
 
-    private class PebbleAppInstaller extends AsyncTask< Void, Integer, Void >
+    private static enum InstallCode
+    {
+        SUCCESS,
+        STORAGE_FAILURE,
+        PEBBLE_INSTALL_FAILURE
+    }
+
+    private class PebbleAppInstaller extends AsyncTask< Void, Integer, InstallCode >
     {
         @Override
-        protected Void doInBackground(Void... params)
+        protected InstallCode doInBackground(Void... params)
         {
+            final InstallCode installCode;
             if( copyRawFileToExternalStorage( R.raw.ringmyphone ) )
             {
-                installPebbleApp();
+                if( installPebbleApp() )
+                {
+                    installCode = InstallCode.SUCCESS;
+                }
+                else
+                {
+                    installCode = InstallCode.PEBBLE_INSTALL_FAILURE;
+                }
+            }
+            else
+            {
+                installCode = InstallCode.STORAGE_FAILURE;
             }
 
-            return null;
+            return installCode;
+        }
+
+        protected void onPostExecute(InstallCode code)
+        {
+            switch( code )
+            {
+                case STORAGE_FAILURE:
+                    Crouton.makeText( MainActivity.this, R.string.install_watch_app_failed_storage, Style.ALERT, Configuration.DURATION_LONG ).show();
+                    break;
+                case PEBBLE_INSTALL_FAILURE:
+                    Crouton.makeText( MainActivity.this, R.string.install_watch_app_failed_pebble, Style.ALERT, Configuration.DURATION_LONG ).show();
+                    break;
+                case SUCCESS:
+                default:
+                    break;
+            }
         }
 
         private boolean installPebbleApp()
         {
+            boolean success = false;
+
             File path = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
             File file = new File(path, "RingMyPhone.pbw");
 
@@ -92,14 +129,14 @@ public class MainActivity extends Activity
             try
             {
                 startActivity(newIntent);
+                success = true;
             }
             catch (android.content.ActivityNotFoundException e)
             {
                 e.printStackTrace();
-                //Toast.makeText(MainActivity.this, "No handler for this type of file.", 4000).show();
             }
 
-            return true;
+            return success;
         }
 
         private boolean copyRawFileToExternalStorage(int resId)
