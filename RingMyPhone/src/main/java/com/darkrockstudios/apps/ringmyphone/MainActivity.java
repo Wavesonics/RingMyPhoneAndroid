@@ -9,19 +9,16 @@ import android.os.Environment;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.webkit.MimeTypeMap;
 import android.widget.BaseAdapter;
 import android.widget.ListView;
-import android.widget.Toast;
 
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.io.OutputStream;
 
 import de.keyboardsurfer.android.widget.crouton.Configuration;
@@ -50,10 +47,28 @@ public class MainActivity extends Activity
 		return true;
 	}
 
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item)
+    {
+        // Handle item selection
+        switch (item.getItemId()) {
+            case R.id.action_about:
+                showAbout();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
+
+    private void showAbout()
+    {
+
+    }
+
 	public void onStopClicked( View v )
 	{
 		Log.i( TAG, "Stopping RingerService" );
-        Crouton.makeText( this, R.string.stop_button_response, Style.ALERT, Configuration.DURATION_SHORT ).show();
+        Crouton.makeText( this, R.string.stop_button_response, Style.CONFIRM, Configuration.DURATION_SHORT ).show();
         stopService( new Intent( this, RingerService.class ) );
 	}
 
@@ -74,6 +89,8 @@ public class MainActivity extends Activity
 
     private class PebbleAppInstaller extends AsyncTask< Void, Integer, InstallCode >
     {
+        private final String PBW_FILE_NAME = "RingMyPhone.pbw";
+
         @Override
         protected InstallCode doInBackground(Void... params)
         {
@@ -97,6 +114,7 @@ public class MainActivity extends Activity
             return installCode;
         }
 
+        @Override
         protected void onPostExecute(InstallCode code)
         {
             switch( code )
@@ -118,14 +136,14 @@ public class MainActivity extends Activity
             boolean success = false;
 
             File path = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
-            File file = new File(path, "RingMyPhone.pbw");
+            File file = new File(path, PBW_FILE_NAME);
 
             String mimeType = "application/octet-stream";
 
             Intent newIntent = new Intent(android.content.Intent.ACTION_VIEW);
 
             newIntent.setDataAndType(Uri.fromFile(file),mimeType);
-            newIntent.setFlags(newIntent.FLAG_ACTIVITY_NEW_TASK);
+            newIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             try
             {
                 startActivity(newIntent);
@@ -146,7 +164,7 @@ public class MainActivity extends Activity
             if( isExternalStorageWritable() )
             {
                 File path = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
-                File file = new File(path, "RingMyPhone.pbw");
+                File file = new File(path, PBW_FILE_NAME);
 
                 try
                 {
@@ -173,40 +191,43 @@ public class MainActivity extends Activity
 
         private boolean isExternalStorageWritable()
         {
-            boolean externalStorageAvailable = false;
-            boolean externalStorageWriteable = false;
+            final boolean externalStorageAvailable;
+            final boolean externalStorageWritable;
 
             String state = Environment.getExternalStorageState();
-
             if (Environment.MEDIA_MOUNTED.equals(state))
             {
                 // We can read and write the media
-                externalStorageAvailable = externalStorageWriteable = true;
+                externalStorageAvailable = externalStorageWritable = true;
             }
             else if (Environment.MEDIA_MOUNTED_READ_ONLY.equals(state))
             {
                 // We can only read the media
                 externalStorageAvailable = true;
-                externalStorageWriteable = false;
+                externalStorageWritable = false;
             }
             else
             {
                 // Something else is wrong. It may be one of many other states, but all we need
                 //  to know is we can neither read nor write
-                externalStorageAvailable = externalStorageWriteable = false;
+                externalStorageAvailable = externalStorageWritable = false;
             }
 
-            return externalStorageAvailable && externalStorageWriteable;
+            return externalStorageAvailable && externalStorageWritable;
         }
     }
 
+    enum MenuItemType
+    {
+        Welcome,
+        Install,
+        Stop,
+        COUNT,
+        Invalid
+    };
+
     private class MenuAdapter extends BaseAdapter
     {
-        private static final int TYPE_INVALID = -1;
-        private static final int TYPE_WELCOME = 0;
-        private static final int TYPE_STOP = 1;
-        private static final int TYPE_INSTALL = 2;
-        private static final int N_TYPES = 3;
 
         public boolean areAllItemsEnabled()
         {
@@ -220,7 +241,7 @@ public class MainActivity extends Activity
 
         public int getCount()
         {
-            return N_TYPES;
+            return MenuItemType.COUNT.ordinal();
         }
 
         @Override
@@ -243,16 +264,16 @@ public class MainActivity extends Activity
             {
                 LayoutInflater inflater = LayoutInflater.from(MainActivity.this);
 
-                final int type = getItemViewType( position );
+                final MenuItemType type = getMenuItemType(position);
                 switch( type )
                 {
-                    case TYPE_WELCOME:
+                    case Welcome:
                         view = inflater.inflate( R.layout.row_welcome, parent, false );
                         break;
-                    case TYPE_STOP:
+                    case Stop:
                         view = inflater.inflate( R.layout.row_stop_ringing, parent, false );
                         break;
-                    case TYPE_INSTALL:
+                    case Install:
                         view = inflater.inflate( R.layout.row_install_watch_app, parent, false );
                         break;
                     default:
@@ -268,32 +289,32 @@ public class MainActivity extends Activity
             return view;
         }
 
-        public int getItemViewType (int position)
+        public MenuItemType getMenuItemType (int position)
         {
-            final int type;
+            final MenuItemType type;
 
-            switch( position )
+            if( position < MenuItemType.COUNT.ordinal() )
             {
-                case 0:
-                    type = TYPE_WELCOME;
-                    break;
-                case 1:
-                    type = TYPE_STOP;
-                    break;
-                case 2:
-                    type = TYPE_INSTALL;
-                    break;
-                default:
-                    type = TYPE_INVALID;
+                type = MenuItemType.values()[position];
+            }
+            else
+            {
+                type = MenuItemType.Invalid;
             }
 
             return type;
         }
 
         @Override
+        public int getItemViewType (int position)
+        {
+            return getMenuItemType(position).ordinal();
+        }
+
+        @Override
         public int getViewTypeCount()
         {
-            return N_TYPES;
+            return MenuItemType.COUNT.ordinal();
         }
 
         @Override

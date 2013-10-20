@@ -5,5 +5,6 @@
     <dimen name="card_padding_vertical">8dp</dimen>
     <dimen name="card_padding_horizontal">8dp</dimen>
     <dimen name="card_inner_padding">8dp</dimen>
+    <dimen name="card_drawable_padding">8dp</dimen>
     <dimen name="tablet_card_width">400dp</dimen>
 </resources>

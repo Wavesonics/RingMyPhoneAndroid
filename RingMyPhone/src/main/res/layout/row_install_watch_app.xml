@@ -21,7 +21,9 @@
             android:textAppearance="?android:attr/textAppearanceMedium"
             android:text="@string/install_watch_app_description"
             android:id="@+id/textView"
-            android:layout_gravity="left|top" />
+            android:layout_gravity="left|top"
+            android:drawablePadding="@dimen/card_drawable_padding"
+            android:drawableLeft="@drawable/ic_action_import"/>
 
         <Button
             android:layout_width="wrap_content"
