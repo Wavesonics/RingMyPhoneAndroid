@@ -28,6 +28,7 @@ import de.keyboardsurfer.android.widget.crouton.Style;
 public class MainActivity extends Activity
 {
 	private static final String TAG = MainActivity.class.getSimpleName();
+    private static final String ABOUT_FRAGMENT_TAG = "AboutFragment";
 
 	@Override
 	protected void onCreate( Bundle savedInstanceState )
@@ -62,7 +63,8 @@ public class MainActivity extends Activity
 
     private void showAbout()
     {
-
+        AboutFragment aboutFragment = new AboutFragment();
+        aboutFragment.show( getFragmentManager(), ABOUT_FRAGMENT_TAG );
     }
 
 	public void onStopClicked( View v )
