@@ -145,7 +145,7 @@ public class MainActivity extends Activity
             Intent newIntent = new Intent(android.content.Intent.ACTION_VIEW);
 
             newIntent.setDataAndType(Uri.fromFile(file),mimeType);
-            newIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            newIntent.setFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
             try
             {
                 startActivity(newIntent);

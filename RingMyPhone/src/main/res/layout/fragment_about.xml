@@ -1,118 +1,123 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:padding="@dimen/about_fragment_padding">
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceLarge"
-        android:text="@string/about_body_header"
-        android:layout_gravity="left|center_vertical"
-        android:linksClickable="true"
-        android:textStyle="bold"/>
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceSmall"
-        android:text="@string/about_body_bio"/>
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/about_body_email"
-        android:textAppearance="?android:attr/textAppearanceMedium"
-        android:autoLink="email"/>
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/about_body_website"
-        android:textAppearance="?android:attr/textAppearanceMedium"
-        android:autoLink="web"/>
-
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
     <LinearLayout
+        android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/about_fragment_spacing"
-        android:gravity="center_vertical">
+        android:padding="@dimen/about_fragment_padding">
 
         <TextView
-            android:layout_width="0dp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:text="@string/about_body_header"
+            android:layout_gravity="left|center_vertical"
+            android:linksClickable="true"
+            android:textStyle="bold"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:text="@string/about_body_bio"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/about_body_email"
             android:textAppearance="?android:attr/textAppearanceMedium"
-            android:text="@string/about_body_market"
-            android:id="@+id/textView2"
-            android:autoLink="web"
-            android:layout_weight="1"/>
-
-        <Button
+            android:autoLink="email"/>
+        <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/about_body_market_button"
-            android:id="@+id/ABOUT_market_button"/>
-    </LinearLayout>
+            android:text="@string/about_body_website"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:autoLink="web"/>
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/about_fragment_spacing"
-        android:textAppearance="?android:attr/textAppearanceMedium"
-        android:text="@string/about_body_open_source"
-        android:id="@+id/textView4"
-        android:textStyle="bold"/>
-
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-
-        <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/ABOUT_github_logo"
-            android:src="@drawable/github"/>
-
-        <TableLayout
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:gravity="center_vertical"
-            android:layout_toRightOf="@id/ABOUT_github_logo"
-            android:layout_alignBottom="@+id/ABOUT_github_logo"
-            android:layout_alignTop="@id/ABOUT_github_logo"
-            android:showDividers="middle">
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/about_fragment_spacing"
+            android:gravity="center_vertical">
 
             <TextView
-                android:id="@+id/ABOUT_github_android"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:textAppearance="?android:attr/textAppearanceMedium"
-                android:text="@string/about_body_github_android"
-                android:linksClickable="true"
-                android:layout_weight="1"
-                android:gravity="center_vertical"/>
+                android:text="@string/about_body_market"
+                android:id="@+id/textView2"
+                android:autoLink="web"
+                android:layout_weight="1"/>
 
-            <TextView
-                android:id="@+id/ABOUT_github_pebble"
+            <Button
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textAppearance="?android:attr/textAppearanceMedium"
-                android:text="@string/about_body_github_pebble"
-                android:linksClickable="true"
-                android:layout_weight="1"
-                android:gravity="center_vertical"/>
+                android:text="@string/about_body_market_button"
+                android:id="@+id/ABOUT_market_button"/>
+        </LinearLayout>
 
-        </TableLayout>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/about_fragment_spacing"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:text="@string/about_body_open_source"
+            android:id="@+id/textView4"
+            android:textStyle="bold"/>
 
-    </RelativeLayout>
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
 
-    <TextView
-        android:id="@+id/ABOUT_feedback"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/about_fragment_spacing"
-        android:textAppearance="?android:attr/textAppearanceMedium"
-        android:text="@string/about_body_feedback"
-        android:linksClickable="true"/>
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/ABOUT_github_logo"
+                android:src="@drawable/github"/>
 
-</LinearLayout>
+            <TableLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center_vertical"
+                android:layout_toRightOf="@id/ABOUT_github_logo"
+                android:layout_alignBottom="@+id/ABOUT_github_logo"
+                android:layout_alignTop="@id/ABOUT_github_logo"
+                android:showDividers="middle">
+
+                <TextView
+                    android:id="@+id/ABOUT_github_android"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:text="@string/about_body_github_android"
+                    android:linksClickable="true"
+                    android:layout_weight="1"
+                    android:gravity="center_vertical"/>
+
+                <TextView
+                    android:id="@+id/ABOUT_github_pebble"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:text="@string/about_body_github_pebble"
+                    android:linksClickable="true"
+                    android:layout_weight="1"
+                    android:gravity="center_vertical"/>
+
+            </TableLayout>
+
+        </RelativeLayout>
+
+        <TextView
+            android:id="@+id/ABOUT_feedback"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/about_fragment_spacing"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:text="@string/about_body_feedback"
+            android:linksClickable="true"/>
+
+    </LinearLayout>
+</ScrollView>
