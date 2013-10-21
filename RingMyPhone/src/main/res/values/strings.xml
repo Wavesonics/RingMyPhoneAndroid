@@ -7,7 +7,7 @@
     <string name="welcome_body">Install the Pebble watch app, then just close this and use your Pebble to start your phone ringing.</string>
     <string name="stop_button">Stop Ringing!</string>
     <string name="stop_button_response">Stopping Ringer…</string>
-    <string name="stop_description">Maybe you lost you\'re watch after ringing your phone, maybe other things, use this to silence your phone!</string>
+    <string name="stop_description">Maybe you lost your watch after ringing your phone, maybe other things, use this to silence your phone!</string>
     <string name="install_watch_app_button">Install Phone App</string>
     <string name="install_watch_app_description">Install the watch app to your Pebble. Come back here to install updates as they are released.</string>
     <string name="install_watch_app_failed_pebble">Pebble App not found. Could not complete install.</string>
