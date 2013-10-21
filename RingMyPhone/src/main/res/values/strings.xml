@@ -12,5 +12,9 @@
     <string name="install_watch_app_description">Install the watch app to your Pebble. Come back here to install updates as they are released.</string>
     <string name="install_watch_app_failed_pebble">Pebble App not found. Could not complete install.</string>
     <string name="install_watch_app_failed_storage">External storage not available. Could not complete install.</string>
+    <string name="about_title">About</string>
+    <string name="about_body"><strong>Dark Rock Studios</strong>
+        <a href="http://darkrockstudios.com/">darkrockstudios.com</a>
+        Check out my <a href="market://search?q=pub:Dark+Rock+Studios">other apps</a>.</string>
 
 </resources>
