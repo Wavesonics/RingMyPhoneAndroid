@@ -22,6 +22,6 @@
     <string name="about_body_open_source">RingMyPhone is Open Source!</string>
     <string name="about_body_github_android" ><a href="http://github.com/Wavesonics/RingMyPhoneAndroid">RingMyPhoneAndroid</a></string>
     <string name="about_body_github_pebble"><a href="http://github.com/Wavesonics/RingMyPhonePebble">RingMyPhonePebble</a></string>
-    <string name="about_body_feedback"><i>Found a bug? Feature request?</i>  <a href="https://github.com/Wavesonics/RingMyPhoneAndroid/issues/new">Log it here!</a></string>
+    <string name="about_body_feedback"><i>Found a bug? Feature request?</i>\n<a href="https://github.com/Wavesonics/RingMyPhoneAndroid/issues/new">Log it here!</a></string>
 
 </resources>
