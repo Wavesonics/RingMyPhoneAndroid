@@ -9,9 +9,26 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceLarge"
-        android:text="@string/about_body"
-        android:id="@+id/ABOUT_body"
+        android:text="@string/about_body_header"
         android:layout_gravity="left|center_vertical"
         android:linksClickable="true"
-        android:autoLink="email|web"/>
+        android:textStyle="bold"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/about_body_website"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:id="@+id/textView"
+        android:layout_marginTop="@dimen/about_fragment_spacing"
+        android:autoLink="web"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="@string/about_body_market"
+        android:id="@+id/textView2"
+        android:layout_marginTop="@dimen/about_fragment_spacing"
+        android:autoLink="web"/>
 </LinearLayout>

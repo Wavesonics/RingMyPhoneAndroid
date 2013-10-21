@@ -13,8 +13,8 @@
     <string name="install_watch_app_failed_pebble">Pebble App not found. Could not complete install.</string>
     <string name="install_watch_app_failed_storage">External storage not available. Could not complete install.</string>
     <string name="about_title">About</string>
-    <string name="about_body"><strong>Dark Rock Studios</strong>
-        <a href="http://darkrockstudios.com/">darkrockstudios.com</a>
-        Check out my <a href="market://search?q=pub:Dark+Rock+Studios">other apps</a>.</string>
+    <string name="about_body_header">Dark Rock Studios</string>
+    <string name="about_body_website">darkrockstudios.com</string>
+    <string name="about_body_market">Check out more Dark Rock Studios apps: market://search?q=pub:Dark+Rock+Studios</string>
 
 </resources>

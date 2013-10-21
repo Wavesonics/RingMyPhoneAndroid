@@ -29,27 +29,6 @@ public class AboutFragment extends DialogFragment
 			dialog.setTitle( R.string.about_title );
 		}
 
-		TextView bodyView = (TextView) view.findViewById( R.id.ABOUT_body );
-		String aboutBody = getString( R.string.about_body );
-		bodyView.setText( linkifyHtml( aboutBody, Linkify.WEB_URLS | Linkify.EMAIL_ADDRESSES ) );
-
 		return view;
-	}
-
-	public static Spannable linkifyHtml( String html, int linkifyMask )
-	{
-		Spanned text = Html.fromHtml( html );
-		URLSpan[] currentSpans = text.getSpans( 0, text.length(), URLSpan.class );
-
-		SpannableString buffer = new SpannableString( text );
-		Linkify.addLinks( buffer, linkifyMask );
-
-		for( URLSpan span : currentSpans )
-		{
-			int end = text.getSpanEnd( span );
-			int start = text.getSpanStart( span );
-			buffer.setSpan( span, start, end, 0 );
-		}
-		return buffer;
 	}
 }
