@@ -14,7 +14,14 @@
     <string name="install_watch_app_failed_storage">External storage not available. Could not complete install.</string>
     <string name="about_title">About</string>
     <string name="about_body_header">Dark Rock Studios</string>
+    <string name="about_body_bio">Adam Brown (Wavesonics)</string>
+    <string name="about_body_email">darkrockstudios@gmail.com</string>
     <string name="about_body_website">darkrockstudios.com</string>
-    <string name="about_body_market">Check out more Dark Rock Studios apps: market://search?q=pub:Dark+Rock+Studios</string>
+    <string name="about_body_market">Check out more of our apps:</string>
+    <string name="about_body_market_button">Google Play</string>
+    <string name="about_body_open_source">RingMyPhone is Open Source!</string>
+    <string name="about_body_github_android" ><a href="http://github.com/Wavesonics/RingMyPhoneAndroid">RingMyPhoneAndroid</a></string>
+    <string name="about_body_github_pebble"><a href="http://github.com/Wavesonics/RingMyPhonePebble">RingMyPhonePebble</a></string>
+    <string name="about_body_feedback"><i>Found a bug? Feature request?</i>  <a href="https://github.com/Wavesonics/RingMyPhoneAndroid/issues/new">Log it here!</a></string>
 
 </resources>

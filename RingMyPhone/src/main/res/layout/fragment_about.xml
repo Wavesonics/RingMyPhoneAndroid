@@ -17,18 +17,102 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:text="@string/about_body_bio"/>
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/about_body_email"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:autoLink="email"/>
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:text="@string/about_body_website"
-        android:textAppearance="?android:attr/textAppearanceLarge"
-        android:id="@+id/textView"
-        android:layout_marginTop="@dimen/about_fragment_spacing"
+        android:textAppearance="?android:attr/textAppearanceMedium"
         android:autoLink="web"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/about_fragment_spacing"
+        android:gravity="center_vertical">
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:text="@string/about_body_market"
+            android:id="@+id/textView2"
+            android:autoLink="web"
+            android:layout_weight="1"/>
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/about_body_market_button"
+            android:id="@+id/ABOUT_market_button"/>
+    </LinearLayout>
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceLarge"
-        android:text="@string/about_body_market"
-        android:id="@+id/textView2"
         android:layout_marginTop="@dimen/about_fragment_spacing"
-        android:autoLink="web"/>
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:text="@string/about_body_open_source"
+        android:id="@+id/textView4"
+        android:textStyle="bold"/>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/ABOUT_github_logo"
+            android:src="@drawable/github"/>
+
+        <TableLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center_vertical"
+            android:layout_toRightOf="@id/ABOUT_github_logo"
+            android:layout_alignBottom="@+id/ABOUT_github_logo"
+            android:layout_alignTop="@id/ABOUT_github_logo"
+            android:showDividers="middle">
+
+            <TextView
+                android:id="@+id/ABOUT_github_android"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:text="@string/about_body_github_android"
+                android:linksClickable="true"
+                android:layout_weight="1"
+                android:gravity="center_vertical"/>
+
+            <TextView
+                android:id="@+id/ABOUT_github_pebble"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:text="@string/about_body_github_pebble"
+                android:linksClickable="true"
+                android:layout_weight="1"
+                android:gravity="center_vertical"/>
+
+        </TableLayout>
+
+    </RelativeLayout>
+
+    <TextView
+        android:id="@+id/ABOUT_feedback"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/about_fragment_spacing"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:text="@string/about_body_feedback"
+        android:linksClickable="true"/>
+
 </LinearLayout>
