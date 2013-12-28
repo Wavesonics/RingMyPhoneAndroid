@@ -12,7 +12,6 @@ import android.os.PowerManager;
 import android.util.Log;
 
 import com.getpebble.android.kit.Constants;
-import com.getpebble.android.kit.PebbleKit;
 import com.getpebble.android.kit.util.PebbleDictionary;
 
 import org.json.JSONException;
@@ -131,7 +130,7 @@ public class RingerService extends Service
 			m_ringtone = RingtoneManager.getRingtone( context, notification );
 		}
 
-		if( !m_ringtone.isPlaying() )
+		if( m_ringtone != null && !m_ringtone.isPlaying() )
 		{
 			m_ringtone.play();
 		}
