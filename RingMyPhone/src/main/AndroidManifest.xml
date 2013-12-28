@@ -6,6 +6,7 @@
 
     <uses-permission android:name="android.permission.WAKE_LOCK"/>
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="com.android.vending.BILLING"/>
 
     <uses-sdk
         android:minSdkVersion="14"
@@ -15,7 +16,11 @@
         android:allowBackup="true"
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
-        android:theme="@style/AppTheme" >
+        android:theme="@style/AppTheme"
+        android:backupAgent=".PreferencesBackupAgent" >
+
+        <meta-data android:name="com.google.android.backup.api_key" android:value="AEdPqrEAAAAI9RVjjuoczaLcOvbT-BvIx_9BbnvfPjL3q6sedA" />
+
         <activity
             android:name="com.darkrockstudios.apps.ringmyphone.MainActivity"
             android:label="@string/app_name" >
