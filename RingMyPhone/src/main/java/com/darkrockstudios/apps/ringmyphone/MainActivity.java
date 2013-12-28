@@ -1,6 +1,5 @@
 package com.darkrockstudios.apps.ringmyphone;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.AsyncTask;
@@ -25,7 +24,7 @@ import de.keyboardsurfer.android.widget.crouton.Configuration;
 import de.keyboardsurfer.android.widget.crouton.Crouton;
 import de.keyboardsurfer.android.widget.crouton.Style;
 
-public class MainActivity extends Activity
+public class MainActivity extends BillingActivity implements BillingActivity.ProStatusListener
 {
 	private static final String TAG = MainActivity.class.getSimpleName();
     private static final String ABOUT_FRAGMENT_TAG = "AboutFragment";
@@ -82,7 +81,13 @@ public class MainActivity extends Activity
         installerTask.execute();
     }
 
-    private static enum InstallCode
+	@Override
+	public void onProStatusUpdate( boolean isPro )
+	{
+
+	}
+
+	private static enum InstallCode
     {
         SUCCESS,
         STORAGE_FAILURE,
