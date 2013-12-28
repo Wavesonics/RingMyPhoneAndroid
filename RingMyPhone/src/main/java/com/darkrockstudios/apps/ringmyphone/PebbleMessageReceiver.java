@@ -3,18 +3,10 @@ package com.darkrockstudios.apps.ringmyphone;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.media.AudioManager;
-import android.media.Ringtone;
-import android.media.RingtoneManager;
-import android.net.Uri;
-import android.os.PowerManager;
 import android.util.Log;
 
 import com.getpebble.android.kit.Constants;
 import com.getpebble.android.kit.PebbleKit;
-import com.getpebble.android.kit.util.PebbleDictionary;
-
-import org.json.JSONException;
 
 import java.util.UUID;
 
@@ -27,7 +19,7 @@ public class PebbleMessageReceiver extends BroadcastReceiver
 
 	public void onReceive( Context context, Intent intent )
 	{
-		if( intent.getAction().equals( Constants.INTENT_APP_RECEIVE ) )
+		if( Constants.INTENT_APP_RECEIVE.equals( intent.getAction() ) )
 		{
 			Log.i( TAG, "Received messaged from Pebble App." );
 
