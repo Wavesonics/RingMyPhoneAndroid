@@ -1,8 +1,39 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              android:orientation="vertical"
-              android:layout_width="match_parent"
-              android:layout_height="match_parent">
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+             android:layout_width="match_parent"
+             android:layout_height="wrap_content"
+             android:gravity="center">
 
-</LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginLeft="@dimen/card_padding_horizontal"
+        android:layout_marginRight="@dimen/card_padding_horizontal"
+        android:layout_marginTop="@dimen/card_padding_vertical"
+        android:layout_marginBottom="@dimen/card_padding_vertical"
+        android:background="@drawable/card_bg"
+        android:orientation="vertical">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:text="Welcome to the Ring My Phone trail! You can use this app for a week and see if you like it, after which it will stop working. You can either purchase it or uninstall it, or even keep it around as a momento of when it used to work!"
+            android:id="@+id/textView"
+            android:layout_gravity="left|top"
+            android:drawablePadding="@dimen/card_drawable_padding"
+            android:drawableLeft="@drawable/ic_action_import"/>
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="right"
+            android:text="@string/purchase_app_button"
+            android:textStyle="bold"
+            android:id="@+id/button"
+            android:onClick="onPurchaseClicked"/>
+
+    </LinearLayout>
+
+</FrameLayout>

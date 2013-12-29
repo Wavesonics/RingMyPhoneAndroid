@@ -81,6 +81,13 @@ public class MainActivity extends BillingActivity implements BillingActivity.Pro
         installerTask.execute();
     }
 
+	public void onPurchaseClicked( View v )
+	{
+		Log.i( TAG, "Purchasing App" );
+
+		purchasePro();
+	}
+
 	@Override
 	public void onProStatusUpdate( boolean isPro )
 	{
@@ -228,6 +235,7 @@ public class MainActivity extends BillingActivity implements BillingActivity.Pro
     {
         Welcome,
         Install,
+	    Purchase,
         Stop,
         COUNT,
         Invalid
@@ -235,7 +243,6 @@ public class MainActivity extends BillingActivity implements BillingActivity.Pro
 
     private class MenuAdapter extends BaseAdapter
     {
-
         public boolean areAllItemsEnabled()
         {
             return false;
@@ -280,6 +287,9 @@ public class MainActivity extends BillingActivity implements BillingActivity.Pro
                     case Stop:
                         view = inflater.inflate( R.layout.row_stop_ringing, parent, false );
                         break;
+	                case Purchase:
+		                view = inflater.inflate( R.layout.row_purchase, parent, false );
+		                break;
                     case Install:
                         view = inflater.inflate( R.layout.row_install_watch_app, parent, false );
                         break;
