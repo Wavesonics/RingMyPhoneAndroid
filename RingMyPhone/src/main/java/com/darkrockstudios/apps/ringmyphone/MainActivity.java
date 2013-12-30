@@ -29,6 +29,8 @@ public class MainActivity extends BillingActivity implements BillingActivity.Pro
 	private static final String TAG = MainActivity.class.getSimpleName();
     private static final String ABOUT_FRAGMENT_TAG = "AboutFragment";
 
+	private boolean m_showPurchaseDialog;
+
 	@Override
 	protected void onCreate( Bundle savedInstanceState )
 	{
@@ -37,6 +39,24 @@ public class MainActivity extends BillingActivity implements BillingActivity.Pro
 
         ListView listView = (ListView) findViewById( R.id.listView );
         listView.setAdapter( new MenuAdapter() );
+
+		Intent intent = getIntent();
+		if( intent != null && Purchase.PURCHASE_URI.equals( intent.getData() ) )
+		{
+			m_showPurchaseDialog = true;
+		}
+	}
+
+	@Override
+	protected void onResume()
+	{
+		super.onResume();
+
+		if( m_showPurchaseDialog )
+		{
+			purchasePro();
+			m_showPurchaseDialog = false;
+		}
 	}
 
 	@Override
