@@ -25,4 +25,8 @@
     <string name="about_body_feedback"><i>Found a bug? Feature request?</i>\n<a href="https://github.com/Wavesonics/RingMyPhoneAndroid/issues/new">Log it here!</a></string>
     <string name="purchase_app_button">Purchase</string>
 
+    <string name="notification_expired_ticker">RingMyPhone trail expired</string>
+    <string name="notification_expired_title">RingMyPhone trail has expired</string>
+    <string name="notification_expired_text">To keep using RingMyPhone please purchase it by clicking here.</string>
+    <string name="notification_expired_purchase_button">Purchase</string>
 </resources>

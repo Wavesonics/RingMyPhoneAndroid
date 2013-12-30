@@ -2,6 +2,7 @@ package com.darkrockstudios.apps.ringmyphone;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.net.Uri;
 import android.preference.PreferenceManager;
 
 import java.util.Date;
@@ -12,6 +13,7 @@ import java.util.concurrent.TimeUnit;
  */
 public class Purchase
 {
+	public static final Uri PURCHASE_URI = Uri.parse( "ringmyphone://com.darkrockstudios.apps.ringmyphone/purchase" );
 	public static final long TRAIL_LENGTH = TimeUnit.DAYS.toMillis( 1 );
 
 	public static boolean isActive( Context context )
