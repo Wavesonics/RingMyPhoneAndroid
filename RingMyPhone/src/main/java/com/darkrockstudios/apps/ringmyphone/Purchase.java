@@ -18,18 +18,18 @@ public class Purchase
 	// For testing
 	//public static final long TRAIL_LENGTH = TimeUnit.SECONDS.toMillis( 1 );
 
-	public static boolean isActive( Context context )
+	public static boolean isActive( final Context context )
 	{
 		return isPurchased( context ) || !isTrailPeriodOver( context );
 	}
 
-	public static boolean isPurchased( Context context )
+	public static boolean isPurchased( final Context context )
 	{
 		SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences( context );
 		return settings.getBoolean( Preferences.KEY_IS_PRO, false );
 	}
 
-	public static boolean isTrailPeriodOver( Context context )
+	public static boolean isTrailPeriodOver( final Context context )
 	{
 		boolean isPast = true;
 

@@ -19,26 +19,36 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.ArrayList;
+import java.util.List;
 
+import butterknife.ButterKnife;
+import butterknife.InjectView;
 import de.keyboardsurfer.android.widget.crouton.Configuration;
 import de.keyboardsurfer.android.widget.crouton.Crouton;
 import de.keyboardsurfer.android.widget.crouton.Style;
 
 public class MainActivity extends BillingActivity implements BillingActivity.ProStatusListener
 {
-	private static final String TAG = MainActivity.class.getSimpleName();
-    private static final String ABOUT_FRAGMENT_TAG = "AboutFragment";
+	private static final String TAG                = MainActivity.class.getSimpleName();
+	private static final String ABOUT_FRAGMENT_TAG = "AboutFragment";
 
 	private boolean m_showPurchaseDialog;
 
+	@InjectView(R.id.listView)
+	ListView m_listView;
+
+	private MenuAdapter m_menuAdapter;
+
 	@Override
-	protected void onCreate( Bundle savedInstanceState )
+	protected void onCreate( final Bundle savedInstanceState )
 	{
 		super.onCreate( savedInstanceState );
 		setContentView( R.layout.activity_main );
+		ButterKnife.inject( this );
 
-        ListView listView = (ListView) findViewById( R.id.listView );
-        listView.setAdapter( new MenuAdapter() );
+		m_menuAdapter = new MenuAdapter();
+		m_listView.setAdapter( m_menuAdapter );
 
 		Intent intent = getIntent();
 		if( intent != null && Purchase.PURCHASE_URI.equals( intent.getData() ) )
@@ -59,21 +69,22 @@ public class MainActivity extends BillingActivity implements BillingActivity.Pro
 	}
 
 	@Override
-	public boolean onCreateOptionsMenu( Menu menu )
+	public boolean onCreateOptionsMenu( final Menu menu )
 	{
 		// Inflate the menu; this adds items to the action bar if it is present.
 		getMenuInflater().inflate( R.menu.main, menu );
 		return true;
 	}
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item)
-    {
-        // Handle item selection
-        switch (item.getItemId()) {
-            case R.id.action_about:
-                showAbout();
-                return true;
+	@Override
+	public boolean onOptionsItemSelected( final MenuItem item )
+	{
+		// Handle item selection
+		switch( item.getItemId() )
+		{
+			case R.id.action_about:
+				showAbout();
+				return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
@@ -85,22 +96,22 @@ public class MainActivity extends BillingActivity implements BillingActivity.Pro
         aboutFragment.show( getFragmentManager(), ABOUT_FRAGMENT_TAG );
     }
 
-	public void onStopClicked( View v )
+	public void onStopClicked( final View v )
 	{
 		Log.i( TAG, "Stopping RingerService" );
         Crouton.makeText( this, R.string.stop_button_response, Style.CONFIRM, Configuration.DURATION_SHORT ).show();
         stopService( new Intent( this, RingerService.class ) );
 	}
 
-    public void onInstallClicked( View v )
-    {
+	public void onInstallClicked( final View v )
+	{
         Log.i( TAG, "Installing Pebble App" );
 
         PebbleAppInstaller installerTask = new PebbleAppInstaller();
         installerTask.execute();
     }
 
-	public void onPurchaseClicked( View v )
+	public void onPurchaseClicked( final View v )
 	{
 		Log.i( TAG, "Purchasing App" );
 
@@ -108,9 +119,9 @@ public class MainActivity extends BillingActivity implements BillingActivity.Pro
 	}
 
 	@Override
-	public void onProStatusUpdate( boolean isPro )
+	public void onProStatusUpdate( final boolean isPro )
 	{
-
+		m_menuAdapter.refresh();
 	}
 
 	protected void onBillingServiceConnected()
@@ -133,7 +144,7 @@ public class MainActivity extends BillingActivity implements BillingActivity.Pro
         private final String PBW_FILE_NAME = "RingMyPhone.pbw";
 
         @Override
-        protected InstallCode doInBackground(Void... params)
+        protected InstallCode doInBackground( final Void... params )
         {
             final InstallCode installCode;
             if( copyRawFileToExternalStorage( R.raw.ringmyphone ) )
@@ -156,7 +167,7 @@ public class MainActivity extends BillingActivity implements BillingActivity.Pro
         }
 
         @Override
-        protected void onPostExecute(InstallCode code)
+        protected void onPostExecute( final InstallCode code )
         {
             switch( code )
             {
@@ -190,7 +201,7 @@ public class MainActivity extends BillingActivity implements BillingActivity.Pro
                 startActivity(newIntent);
                 success = true;
             }
-            catch (android.content.ActivityNotFoundException e)
+            catch( final android.content.ActivityNotFoundException e )
             {
                 e.printStackTrace();
             }
@@ -198,8 +209,8 @@ public class MainActivity extends BillingActivity implements BillingActivity.Pro
             return success;
         }
 
-        private boolean copyRawFileToExternalStorage(int resId)
-        {
+	    private boolean copyRawFileToExternalStorage( final int resId )
+	    {
             boolean success = false;
 
             if( isExternalStorageWritable() )
@@ -222,7 +233,7 @@ public class MainActivity extends BillingActivity implements BillingActivity.Pro
 
                     success = true;
                 }
-                catch(IOException e)
+                catch( final IOException e )
                 {
                     e.printStackTrace();
                 }
@@ -270,43 +281,64 @@ public class MainActivity extends BillingActivity implements BillingActivity.Pro
 
     private class MenuAdapter extends BaseAdapter
     {
-        public boolean areAllItemsEnabled()
+	    private List<MenuItemType> m_menuItems;
+
+	    public MenuAdapter()
+	    {
+		    m_menuItems = new ArrayList<>();
+		    refresh();
+	    }
+
+	    public void refresh()
+	    {
+		    m_menuItems.clear();
+
+		    m_menuItems.add( MenuItemType.Welcome );
+		    m_menuItems.add( MenuItemType.Install );
+		    if( !isPro() )
+		    {
+			    m_menuItems.add( MenuItemType.Purchase );
+		    }
+		    m_menuItems.add( MenuItemType.Stop );
+	    }
+
+	    public boolean areAllItemsEnabled()
         {
             return false;
         }
 
-        public boolean isEnabled(int position)
-        {
+	    public boolean isEnabled( final int position )
+	    {
             return false;
         }
 
         public int getCount()
         {
-            return MenuItemType.COUNT.ordinal();
+	        return m_menuItems.size();
         }
 
         @Override
-        public Object getItem(int position)
+        public Object getItem( final int position )
         {
-            return null;
+	        return m_menuItems.get( position );
         }
 
         @Override
-        public long getItemId(int position)
+        public long getItemId( final int position )
         {
             return getItemViewType(position);
         }
 
         @Override
-        public View getView(int position, View convertView, ViewGroup parent)
+        public View getView( final int position, final View convertView, final ViewGroup parent )
         {
             final View view;
             if( convertView == null )
             {
                 LayoutInflater inflater = LayoutInflater.from(MainActivity.this);
 
-                final MenuItemType type = getMenuItemType(position);
-                switch( type )
+	            final MenuItemType type = (MenuItemType) getItem( position );
+	            switch( type )
                 {
                     case Welcome:
                         view = inflater.inflate( R.layout.row_welcome, parent, false );
@@ -333,26 +365,10 @@ public class MainActivity extends BillingActivity implements BillingActivity.Pro
             return view;
         }
 
-        public MenuItemType getMenuItemType (int position)
-        {
-            final MenuItemType type;
-
-            if( position < MenuItemType.COUNT.ordinal() )
-            {
-                type = MenuItemType.values()[position];
-            }
-            else
-            {
-                type = MenuItemType.Invalid;
-            }
-
-            return type;
-        }
-
         @Override
-        public int getItemViewType (int position)
+        public int getItemViewType( final int position )
         {
-            return getMenuItemType(position).ordinal();
+	        return ((MenuItemType) getItem( position )).ordinal();
         }
 
         @Override
