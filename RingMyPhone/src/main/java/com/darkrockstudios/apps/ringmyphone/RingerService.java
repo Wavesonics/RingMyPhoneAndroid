@@ -89,11 +89,11 @@ public class RingerService extends Service
 	{
 		NotificationCompat.Builder builder = new NotificationCompat.Builder( this );
 		builder.setTicker( getString( R.string.notification_expired_ticker ) );
-		builder.setContentTitle( getString( R.string.notification_expired_title ) );
+		builder.setContentTitle( getString( R.string.notification_expired_ticker ) );
 		builder.setContentText( getString( R.string.notification_expired_text ) );
 		builder.setSmallIcon( R.drawable.ic_stat_clock );
 
-		BitmapDrawable largeIcon = (BitmapDrawable) getResources().getDrawable( R.drawable.ic_action_clock );
+		BitmapDrawable largeIcon = (BitmapDrawable) getResources().getDrawable( R.drawable.ic_launcher );
 		builder.setLargeIcon( largeIcon.getBitmap() );
 
 		Intent intent = new Intent( this, MainActivity.class );
@@ -103,7 +103,8 @@ public class RingerService extends Service
 		builder.setContentIntent( pendingIntent );
 
 		builder.setAutoCancel( true );
-		NotificationCompat.Style bigStyle = new NotificationCompat.BigTextStyle();
+		NotificationCompat.BigTextStyle bigStyle = new NotificationCompat.BigTextStyle();
+		bigStyle.bigText( getString( R.string.notification_expired_text ) );
 		builder.setStyle( bigStyle );
 
 		builder.addAction( R.drawable.ic_action_lock_open, getString( R.string.notification_expired_purchase_button ),
