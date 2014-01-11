@@ -52,9 +52,8 @@ public class MainActivity extends BillingActivity implements BillingActivity.Pro
 	{
 		super.onResume();
 
-		if( m_showPurchaseDialog )
+		if( m_showPurchaseDialog && purchasePro() )
 		{
-			purchasePro();
 			m_showPurchaseDialog = false;
 		}
 	}
@@ -112,6 +111,14 @@ public class MainActivity extends BillingActivity implements BillingActivity.Pro
 	public void onProStatusUpdate( boolean isPro )
 	{
 
+	}
+
+	protected void onBillingServiceConnected()
+	{
+		if( m_showPurchaseDialog )
+		{
+			m_showPurchaseDialog = !purchasePro();
+		}
 	}
 
 	private static enum InstallCode

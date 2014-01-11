@@ -26,7 +26,7 @@ import java.util.Date;
 /**
  * Created by Adam on 12/10/13.
  */
-public class BillingActivity extends Activity
+public abstract class BillingActivity extends Activity
 {
 	private static final String TAG             = BillingActivity.class.getSimpleName();
 	private static final String PRODUCT_SKU_PRO = "ringmyphone_pro";
@@ -71,8 +71,12 @@ public class BillingActivity extends Activity
 			{
 				runProCheck();
 			}
+
+			onBillingServiceConnected();
 		}
 	}
+
+	protected abstract void onBillingServiceConnected();
 
 	public void setProStatusListener( final ProStatusListener listener )
 	{
@@ -195,8 +199,10 @@ public class BillingActivity extends Activity
 		}
 	}
 
-	public void purchasePro()
+	public boolean purchasePro()
 	{
+		boolean shown = false;
+
 		if( m_service != null )
 		{
 			try
@@ -215,6 +221,7 @@ public class BillingActivity extends Activity
 					                            Integer.valueOf( 0 ),
 					                            Integer.valueOf( 0 ),
 					                            Integer.valueOf( 0 ) );
+					shown = true;
 				}
 			}
 			catch( RemoteException | IntentSender.SendIntentException e )
@@ -222,6 +229,8 @@ public class BillingActivity extends Activity
 				e.printStackTrace();
 			}
 		}
+
+		return shown;
 	}
 
 	@Override

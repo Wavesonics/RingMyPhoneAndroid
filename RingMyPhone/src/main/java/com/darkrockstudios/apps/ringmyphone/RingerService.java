@@ -95,12 +95,7 @@ public class RingerService extends Service
 
 		BitmapDrawable largeIcon = (BitmapDrawable) getResources().getDrawable( R.drawable.ic_launcher );
 		builder.setLargeIcon( largeIcon.getBitmap() );
-
-		Intent intent = new Intent( this, MainActivity.class );
-		intent.setData( Purchase.PURCHASE_URI );
-
-		PendingIntent pendingIntent = PendingIntent.getActivity( this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT );
-		builder.setContentIntent( pendingIntent );
+		builder.setContentIntent( createDefaultIntent() );
 
 		builder.setAutoCancel( true );
 		NotificationCompat.BigTextStyle bigStyle = new NotificationCompat.BigTextStyle();
@@ -108,10 +103,27 @@ public class RingerService extends Service
 		builder.setStyle( bigStyle );
 
 		builder.addAction( R.drawable.ic_action_lock_open, getString( R.string.notification_expired_purchase_button ),
-		                   pendingIntent );
+		                   createPurchaseIntent() );
 
 		NotificationManager notificationManager = (NotificationManager) getSystemService( Context.NOTIFICATION_SERVICE );
 		notificationManager.notify( NOTIFICATION_ID, builder.build() );
+	}
+
+	private PendingIntent createDefaultIntent()
+	{
+		Intent intent = new Intent( this, MainActivity.class );
+
+		PendingIntent pendingIntent = PendingIntent.getActivity( this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT );
+		return pendingIntent;
+	}
+
+	private PendingIntent createPurchaseIntent()
+	{
+		Intent intent = new Intent( this, MainActivity.class );
+		intent.setData( Purchase.PURCHASE_URI );
+
+		PendingIntent pendingIntent = PendingIntent.getActivity( this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT );
+		return pendingIntent;
 	}
 
 	@Override
