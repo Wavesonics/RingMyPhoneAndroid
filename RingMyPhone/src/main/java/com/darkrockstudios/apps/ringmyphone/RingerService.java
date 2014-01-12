@@ -102,7 +102,7 @@ public class RingerService extends Service
 		bigStyle.bigText( getString( R.string.notification_expired_text ) );
 		builder.setStyle( bigStyle );
 
-		builder.addAction( R.drawable.ic_action_lock_open, getString( R.string.notification_expired_purchase_button ),
+		builder.addAction( R.drawable.ic_notification_lock_open, getString( R.string.notification_expired_purchase_button ),
 		                   createPurchaseIntent() );
 
 		NotificationManager notificationManager = (NotificationManager) getSystemService( Context.NOTIFICATION_SERVICE );

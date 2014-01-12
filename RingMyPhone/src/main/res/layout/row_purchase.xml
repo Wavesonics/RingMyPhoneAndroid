@@ -23,7 +23,7 @@
             android:id="@+id/textView"
             android:layout_gravity="left|top"
             android:drawablePadding="@dimen/card_drawable_padding"
-            android:drawableLeft="@drawable/ic_action_import"/>
+            android:drawableLeft="@drawable/ic_action_lock_open"/>
 
         <Button
             android:layout_width="wrap_content"

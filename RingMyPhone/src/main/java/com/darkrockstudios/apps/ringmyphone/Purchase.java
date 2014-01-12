@@ -13,10 +13,10 @@ import java.util.concurrent.TimeUnit;
  */
 public class Purchase
 {
-	public static final Uri PURCHASE_URI = Uri.parse( "ringmyphone://com.darkrockstudios.apps.ringmyphone/purchase" );
-	public static final long TRAIL_LENGTH = TimeUnit.DAYS.toMillis( 7 );
+	public static final Uri  PURCHASE_URI = Uri.parse( "ringmyphone://com.darkrockstudios.apps.ringmyphone/purchase" );
+	//public static final long TRAIL_LENGTH = TimeUnit.DAYS.toMillis( 7 );
 	// For testing
-	//public static final long TRAIL_LENGTH = TimeUnit.SECONDS.toMillis( 1 );
+	public static final long TRAIL_LENGTH = TimeUnit.HOURS.toMillis( 4 );
 
 	public static boolean isActive( final Context context )
 	{
