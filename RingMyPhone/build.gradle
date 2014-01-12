@@ -45,13 +45,13 @@ android {
             project.hasProperty('storePassword') &&
             project.hasProperty('keyAlias') &&
             project.hasProperty('keyPassword')) {
-        println 'local.properties all set'
+        println 'gradle.properties OK'
         android.signingConfigs.release.storeFile = file(storeFile)
         android.signingConfigs.release.storePassword = storePassword
         android.signingConfigs.release.keyAlias = keyAlias
         android.signingConfigs.release.keyPassword = keyPassword
     } else {
-        println 'local.properties not correctly set'
+        println 'gradle.properties not well formed'
         if(!project.hasProperty('storeFile')) println 'storeFile not defined'
         if(!project.hasProperty('storePassword')) println 'storePassword not defined'
         if(!project.hasProperty('keyAlias')) println 'keyAlias not defined'
