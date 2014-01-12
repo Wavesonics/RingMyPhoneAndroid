@@ -1,11 +1,13 @@
 package com.darkrockstudios.apps.ringmyphone;
 
+import android.app.Activity;
 import android.app.Dialog;
 import android.app.DialogFragment;
 import android.content.Intent;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
-import android.text.Html;
 import android.text.method.LinkMovementMethod;
 import android.text.method.MovementMethod;
 import android.view.LayoutInflater;
@@ -46,6 +48,9 @@ public class AboutFragment extends DialogFragment implements View.OnClickListene
 		githubFeedbackView.setMovementMethod( linkMovementMethod);
 		githubFeedbackView.setText( getText( R.string.about_body_feedback ) );
 
+		TextView versionView = (TextView) view.findViewById( R.id.ABOUT_app_version );
+		versionView.setText( "v" + getAppVersion() );
+
 		return view;
 	}
 
@@ -58,5 +63,30 @@ public class AboutFragment extends DialogFragment implements View.OnClickListene
 			intent.setData( Uri.parse( "market://search?q=pub:Dark+Rock+Studios" ) );
 			startActivity( intent );
 		}
+	}
+
+	private String getAppVersion()
+	{
+		String version = "-";
+
+		Activity activity = getActivity();
+		if( activity != null )
+		{
+			try
+			{
+				PackageManager pm = activity.getPackageManager();
+				if( pm != null )
+				{
+					PackageInfo pinfo = pm.getPackageInfo( activity.getPackageName(), 0 );
+					version = pinfo.versionName;
+				}
+			}
+			catch( PackageManager.NameNotFoundException e )
+			{
+				e.printStackTrace();
+			}
+		}
+
+		return version;
 	}
 }
