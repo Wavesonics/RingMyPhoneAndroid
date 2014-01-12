@@ -26,8 +26,7 @@ import org.json.JSONException;
 public class RingerService extends Service
 {
 	private static final String TAG = RingerService.class.getSimpleName();
-	private static final String ACTION_STOP_RINGING   = RingerService.class.getName() + ".STOP_RINGING";
-	private static final String ACTION_PEBBLE_RECEIVE = "com.getpebble.action.app.RECEIVE";
+	public static final String ACTION_STOP_RINGING = RingerService.class.getName() + ".STOP_RINGING";
 
 	private static final int CMD_KEY = 0x0;
 
@@ -51,9 +50,11 @@ public class RingerService extends Service
 	{
 		if( intent != null )
 		{
-			final String action = intent.getAction();
-
-			if( ACTION_PEBBLE_RECEIVE.equals( action ) )
+			if( ACTION_STOP_RINGING.equals( intent.getAction() ) )
+			{
+				silencePhone( this );
+			}
+			else
 			{
 				if( Purchase.isActive( this ) )
 				{
@@ -91,10 +92,6 @@ public class RingerService extends Service
 					postExpiredNotification();
 				}
 			}
-			else if( ACTION_STOP_RINGING.equals( action ) )
-			{
-				silencePhone( this );
-			}
 		}
 
 		return START_NOT_STICKY;
@@ -114,9 +111,7 @@ public class RingerService extends Service
 		builder.setContentText( getString( R.string.notification_ringing_text ) );
 		builder.setSmallIcon( R.drawable.ic_action_volume_up );
 
-		//BitmapDrawable largeIcon = (BitmapDrawable) getResources().getDrawable( R.drawable.ic_launcher );
-		//builder.setLargeIcon( largeIcon.getBitmap() );
-		builder.setContentIntent( createRingingIntent() );
+		builder.setContentIntent( createStopRingingIntent() );
 		builder.setOngoing( true );
 
 		NotificationManager notificationManager = (NotificationManager) getSystemService( Context.NOTIFICATION_SERVICE );
@@ -147,7 +142,7 @@ public class RingerService extends Service
 		notificationManager.notify( NOTIFICATION_ID_TRIAL_EXPIRED, builder.build() );
 	}
 
-	private PendingIntent createRingingIntent()
+	private PendingIntent createStopRingingIntent()
 	{
 		Intent intent = new Intent( ACTION_STOP_RINGING );
 

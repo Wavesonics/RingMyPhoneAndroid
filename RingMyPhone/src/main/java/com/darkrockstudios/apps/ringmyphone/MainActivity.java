@@ -276,9 +276,7 @@ public class MainActivity extends BillingActivity implements BillingActivity.Pro
         Welcome,
         Install,
 	    Purchase,
-        Stop,
-        COUNT,
-        Invalid
+	    Stop
     };
 
     private class MenuAdapter extends BaseAdapter
@@ -376,7 +374,7 @@ public class MainActivity extends BillingActivity implements BillingActivity.Pro
         @Override
         public int getViewTypeCount()
         {
-            return MenuItemType.COUNT.ordinal();
+	        return MenuItemType.values().length;
         }
 
         @Override

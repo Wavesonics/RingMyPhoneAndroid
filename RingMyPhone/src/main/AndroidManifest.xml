@@ -4,7 +4,7 @@
     android:versionCode="2"
     android:versionName="2.0-RC1">
 
-<uses-permission android:name="android.permission.WAKE_LOCK"/>
+    <uses-permission android:name="android.permission.WAKE_LOCK"/>
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
     <uses-permission android:name="com.android.vending.BILLING"/>
 
@@ -14,12 +14,13 @@
 
     <application
         android:allowBackup="true"
+        android:backupAgent="com.darkrockstudios.apps.ringmyphone.PreferencesBackupAgent"
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
-        android:theme="@style/AppTheme"
-        android:backupAgent=".PreferencesBackupAgent" >
-
-        <meta-data android:name="com.google.android.backup.api_key" android:value="AEdPqrEAAAAI9RVjjuoczaLcOvbT-BvIx_9BbnvfPjL3q6sedA" />
+        android:theme="@style/AppTheme">
+        <meta-data
+            android:name="com.google.android.backup.api_key"
+            android:value="AEdPqrEAAAAI9RVjjuoczaLcOvbT-BvIx_9BbnvfPjL3q6sedA"/>
 
         <activity
             android:name="com.darkrockstudios.apps.ringmyphone.MainActivity"
@@ -30,13 +31,24 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <receiver android:name="com.darkrockstudios.apps.ringmyphone.PebbleMessageReceiver" android:exported="true" >
-            <intent-filter>
+
+        <receiver
+            android:name="com.darkrockstudios.apps.ringmyphone.PebbleMessageReceiver"
+            android:exported="true">
+        <intent-filter>
                 <action android:name="com.getpebble.action.app.RECEIVE" />
+            </intent-filter>
+        </receiver>
+
+        <service android:name="com.darkrockstudios.apps.ringmyphone.RingerService"/>
+
+        <receiver
+            android:name="com.darkrockstudios.apps.ringmyphone.StopRingingReceiver"
+            android:exported="false">
+            <intent-filter>
                 <action android:name="com.darkrockstudios.apps.ringmyphone.RingerService.STOP_RINGING"/>
             </intent-filter>
         </receiver>
-        <service android:name=".RingerService"/>
     </application>
 
 </manifest>
