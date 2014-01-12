@@ -26,13 +26,16 @@ import org.json.JSONException;
 public class RingerService extends Service
 {
 	private static final String TAG = RingerService.class.getSimpleName();
+	private static final String ACTION_STOP_RINGING   = RingerService.class.getName() + ".STOP_RINGING";
+	private static final String ACTION_PEBBLE_RECEIVE = "com.getpebble.action.app.RECEIVE";
 
 	private static final int CMD_KEY = 0x0;
 
 	private static final int CMD_START = 0x01;
 	private static final int CMD_STOP  = 0x02;
 
-	private static final int NOTIFICATION_ID = 3;
+	private static final int NOTIFICATION_ID_TRIAL_EXPIRED = 3;
+	private static final int NOTIFICATION_ID_RINGING       = 4;
 
 	private PowerManager.WakeLock m_wakeLock;
 	private Ringtone              m_ringtone;
@@ -46,43 +49,78 @@ public class RingerService extends Service
 	@Override
 	public int onStartCommand( Intent intent, int flags, int startId )
 	{
-		if( Purchase.isActive( this ) )
+		if( intent != null )
 		{
-			final int transactionId = intent.getIntExtra( Constants.TRANSACTION_ID, -1 );
-			final String jsonData = intent.getStringExtra( Constants.MSG_DATA );
+			final String action = intent.getAction();
 
-			try
+			if( ACTION_PEBBLE_RECEIVE.equals( action ) )
 			{
-				final PebbleDictionary data = PebbleDictionary.fromJson( jsonData );
+				if( Purchase.isActive( this ) )
+				{
+					final int transactionId = intent.getIntExtra( Constants.TRANSACTION_ID, -1 );
+					final String jsonData = intent.getStringExtra( Constants.MSG_DATA );
 
-				long cmd = data.getUnsignedInteger( CMD_KEY );
-				if( cmd == CMD_START )
-				{
-					Log.w( TAG, "Ring Command Received!" );
-					setMaxVolume( this );
-					ringPhone( this );
-				}
-				else if( cmd == CMD_STOP )
-				{
-					Log.w( TAG, "Silence Command Received!" );
-					silencePhone( this );
+					try
+					{
+						final PebbleDictionary data = PebbleDictionary.fromJson( jsonData );
+
+						long cmd = data.getUnsignedInteger( CMD_KEY );
+						if( cmd == CMD_START )
+						{
+							Log.w( TAG, "Ring Command Received!" );
+							setMaxVolume( this );
+							ringPhone( this );
+						}
+						else if( cmd == CMD_STOP )
+						{
+							Log.w( TAG, "Silence Command Received!" );
+							silencePhone( this );
+						}
+						else
+						{
+							Log.w( TAG, "Bad command received from pebble app: " + cmd );
+						}
+					}
+					catch( JSONException e )
+					{
+						Log.w( TAG, "failed retrieved -> dict" + e );
+					}
 				}
 				else
 				{
-					Log.w( TAG, "Bad command received from pebble app: " + cmd );
+					postExpiredNotification();
 				}
 			}
-			catch( JSONException e )
+			else if( ACTION_STOP_RINGING.equals( action ) )
 			{
-				Log.w( TAG, "failed retrieved -> dict" + e );
+				silencePhone( this );
 			}
-		}
-		else
-		{
-			postExpiredNotification();
 		}
 
 		return START_NOT_STICKY;
+	}
+
+	private void dismissRingingNotification()
+	{
+		NotificationManager notificationManager = (NotificationManager) getSystemService( Context.NOTIFICATION_SERVICE );
+		notificationManager.cancel( NOTIFICATION_ID_RINGING );
+	}
+
+	private void postRingingNotification()
+	{
+		NotificationCompat.Builder builder = new NotificationCompat.Builder( this );
+		builder.setTicker( getString( R.string.notification_ringing_ticker ) );
+		builder.setContentTitle( getString( R.string.notification_ringing_ticker ) );
+		builder.setContentText( getString( R.string.notification_ringing_text ) );
+		builder.setSmallIcon( R.drawable.ic_action_volume_up );
+
+		//BitmapDrawable largeIcon = (BitmapDrawable) getResources().getDrawable( R.drawable.ic_launcher );
+		//builder.setLargeIcon( largeIcon.getBitmap() );
+		builder.setContentIntent( createRingingIntent() );
+		builder.setOngoing( true );
+
+		NotificationManager notificationManager = (NotificationManager) getSystemService( Context.NOTIFICATION_SERVICE );
+		notificationManager.notify( NOTIFICATION_ID_RINGING, builder.build() );
 	}
 
 	private void postExpiredNotification()
@@ -106,7 +144,15 @@ public class RingerService extends Service
 		                   createPurchaseIntent() );
 
 		NotificationManager notificationManager = (NotificationManager) getSystemService( Context.NOTIFICATION_SERVICE );
-		notificationManager.notify( NOTIFICATION_ID, builder.build() );
+		notificationManager.notify( NOTIFICATION_ID_TRIAL_EXPIRED, builder.build() );
+	}
+
+	private PendingIntent createRingingIntent()
+	{
+		Intent intent = new Intent( ACTION_STOP_RINGING );
+
+		PendingIntent pendingIntent = PendingIntent.getBroadcast( this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT );
+		return pendingIntent;
 	}
 
 	private PendingIntent createDefaultIntent()
@@ -171,12 +217,16 @@ public class RingerService extends Service
 
 		restorePreviousVolume( context );
 
+		dismissRingingNotification();
+
 		releaseWakeLock( context );
 	}
 
 	private void ringPhone( Context context )
 	{
 		getWakeLock( context );
+
+		postRingingNotification();
 
 		if( m_ringtone == null )
 		{

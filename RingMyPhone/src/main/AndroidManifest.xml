@@ -33,6 +33,7 @@
         <receiver android:name="com.darkrockstudios.apps.ringmyphone.PebbleMessageReceiver" android:exported="true" >
             <intent-filter>
                 <action android:name="com.getpebble.action.app.RECEIVE" />
+                <action android:name="com.darkrockstudios.apps.ringmyphone.RingerService.STOP_RINGING"/>
             </intent-filter>
         </receiver>
         <service android:name=".RingerService"/>

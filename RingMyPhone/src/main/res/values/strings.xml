@@ -28,4 +28,7 @@
     <string name="notification_expired_ticker">RingMyPhone trail expired</string>
     <string name="notification_expired_text">To keep using RingMyPhone please purchase it by clicking here.</string>
     <string name="notification_expired_purchase_button">Purchase</string>
+
+    <string name="notification_ringing_ticker">RingMyPhone is ringing</string>
+    <string name="notification_ringing_text">Tap to silence ringing</string>
 </resources>
