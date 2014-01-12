@@ -47,6 +47,8 @@ public class MainActivity extends BillingActivity implements BillingActivity.Pro
 		setContentView( R.layout.activity_main );
 		ButterKnife.inject( this );
 
+		setProStatusListener( this );
+
 		m_menuAdapter = new MenuAdapter();
 		m_listView.setAdapter( m_menuAdapter );
 

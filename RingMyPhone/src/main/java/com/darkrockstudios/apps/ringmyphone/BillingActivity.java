@@ -257,7 +257,10 @@ public abstract class BillingActivity extends Activity
 						Log.d( TAG, "You have bought " + sku );
 
 						cacheProLocally();
-						m_statusListener.onProStatusUpdate( true );
+						if( m_statusListener != null )
+						{
+							m_statusListener.onProStatusUpdate( true );
+						}
 					}
 					else
 					{
