@@ -87,31 +87,31 @@ public class MainActivity extends BillingActivity implements BillingActivity.Pro
 			case R.id.action_about:
 				showAbout();
 				return true;
-            default:
-                return super.onOptionsItemSelected(item);
-        }
-    }
+			default:
+				return super.onOptionsItemSelected( item );
+		}
+	}
 
-    private void showAbout()
-    {
-        AboutFragment aboutFragment = new AboutFragment();
-        aboutFragment.show( getFragmentManager(), ABOUT_FRAGMENT_TAG );
-    }
+	private void showAbout()
+	{
+		AboutFragment aboutFragment = new AboutFragment();
+		aboutFragment.show( getFragmentManager(), ABOUT_FRAGMENT_TAG );
+	}
 
 	public void onStopClicked( final View v )
 	{
 		Log.i( TAG, "Stopping RingerService" );
-        Crouton.makeText( this, R.string.stop_button_response, Style.CONFIRM, Configuration.DURATION_SHORT ).show();
-        stopService( new Intent( this, RingerService.class ) );
+		Crouton.makeText( this, R.string.stop_button_response, Style.CONFIRM, Configuration.DURATION_SHORT ).show();
+		stopService( new Intent( this, RingerService.class ) );
 	}
 
 	public void onInstallClicked( final View v )
 	{
-        Log.i( TAG, "Installing Pebble App" );
+		Log.i( TAG, "Installing Pebble App" );
 
-        PebbleAppInstaller installerTask = new PebbleAppInstaller();
-        installerTask.execute();
-    }
+		PebbleAppInstaller installerTask = new PebbleAppInstaller();
+		installerTask.execute();
+	}
 
 	public void onPurchaseClicked( final View v )
 	{
@@ -135,252 +135,258 @@ public class MainActivity extends BillingActivity implements BillingActivity.Pro
 	}
 
 	private static enum InstallCode
-    {
-        SUCCESS,
-        STORAGE_FAILURE,
-        PEBBLE_INSTALL_FAILURE
-    }
+	{
+		SUCCESS,
+		STORAGE_FAILURE,
+		PEBBLE_INSTALL_FAILURE
+	}
 
-    private class PebbleAppInstaller extends AsyncTask< Void, Integer, InstallCode >
-    {
-        private final String PBW_FILE_NAME = "RingMyPhone.pbw";
+	private class PebbleAppInstaller extends AsyncTask<Void, Integer, InstallCode>
+	{
+		private final String PBW_FILE_NAME = "RingMyPhone.pbw";
 
-        @Override
-        protected InstallCode doInBackground( final Void... params )
-        {
-            final InstallCode installCode;
-            if( copyRawFileToExternalStorage( R.raw.ringmyphone ) )
-            {
-                if( installPebbleApp() )
-                {
-                    installCode = InstallCode.SUCCESS;
-                }
-                else
-                {
-                    installCode = InstallCode.PEBBLE_INSTALL_FAILURE;
-                }
-            }
-            else
-            {
-                installCode = InstallCode.STORAGE_FAILURE;
-            }
+		@Override
+		protected InstallCode doInBackground( final Void... params )
+		{
+			final InstallCode installCode;
+			if( copyRawFileToExternalStorage( R.raw.ringmyphone ) )
+			{
+				if( installPebbleApp() )
+				{
+					installCode = InstallCode.SUCCESS;
+				}
+				else
+				{
+					installCode = InstallCode.PEBBLE_INSTALL_FAILURE;
+				}
+			}
+			else
+			{
+				installCode = InstallCode.STORAGE_FAILURE;
+			}
 
-            return installCode;
-        }
+			return installCode;
+		}
 
-        @Override
-        protected void onPostExecute( final InstallCode code )
-        {
-            switch( code )
-            {
-                case STORAGE_FAILURE:
-                    Crouton.makeText( MainActivity.this, R.string.install_watch_app_failed_storage, Style.ALERT, Configuration.DURATION_LONG ).show();
-                    break;
-                case PEBBLE_INSTALL_FAILURE:
-                    Crouton.makeText( MainActivity.this, R.string.install_watch_app_failed_pebble, Style.ALERT, Configuration.DURATION_LONG ).show();
-                    break;
-                case SUCCESS:
-                default:
-                    break;
-            }
-        }
+		@Override
+		protected void onPostExecute( final InstallCode code )
+		{
+			switch( code )
+			{
+				case STORAGE_FAILURE:
+					Crouton.makeText( MainActivity.this, R.string.install_watch_app_failed_storage, Style.ALERT,
+					                  Configuration.DURATION_LONG ).show();
+					break;
+				case PEBBLE_INSTALL_FAILURE:
+					Crouton.makeText( MainActivity.this, R.string.install_watch_app_failed_pebble, Style.ALERT,
+					                  Configuration.DURATION_LONG ).show();
+					break;
+				case SUCCESS:
+				default:
+					break;
+			}
+		}
 
-        private boolean installPebbleApp()
-        {
-            boolean success = false;
+		private boolean installPebbleApp()
+		{
+			boolean success = false;
 
-            File path = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
-            File file = new File(path, PBW_FILE_NAME);
+			File path = Environment.getExternalStoragePublicDirectory( Environment.DIRECTORY_DOWNLOADS );
+			File file = new File( path, PBW_FILE_NAME );
 
-            String mimeType = "application/octet-stream";
+			String mimeType = "application/octet-stream";
 
-            Intent newIntent = new Intent(android.content.Intent.ACTION_VIEW);
+			Intent newIntent = new Intent( android.content.Intent.ACTION_VIEW );
 
-            newIntent.setDataAndType(Uri.fromFile(file),mimeType);
-            newIntent.setFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
-            try
-            {
-                startActivity(newIntent);
-                success = true;
-            }
-            catch( final android.content.ActivityNotFoundException e )
-            {
-                e.printStackTrace();
-            }
+			newIntent.setDataAndType( Uri.fromFile( file ), mimeType );
+			newIntent.setFlags( Intent.FLAG_ACTIVITY_NO_HISTORY );
+			try
+			{
+				startActivity( newIntent );
+				success = true;
+			}
+			catch( final android.content.ActivityNotFoundException e )
+			{
+				e.printStackTrace();
+			}
 
-            return success;
-        }
+			return success;
+		}
 
-	    private boolean copyRawFileToExternalStorage( final int resId )
-	    {
-            boolean success = false;
+		private boolean copyRawFileToExternalStorage( final int resId )
+		{
+			boolean success = false;
 
-            if( isExternalStorageWritable() )
-            {
-                File path = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
-                File file = new File(path, PBW_FILE_NAME);
+			if( isExternalStorageWritable() )
+			{
+				File path = Environment.getExternalStoragePublicDirectory( Environment.DIRECTORY_DOWNLOADS );
+				File file = new File( path, PBW_FILE_NAME );
 
-                try
-                {
-                    path.mkdirs();
+				try
+				{
+					path.mkdirs();
 
-                    InputStream is = getResources().openRawResource(resId);
-                    OutputStream os = new FileOutputStream(file);
+					InputStream is = getResources().openRawResource( resId );
+					OutputStream os = new FileOutputStream( file );
 
-                    byte[] data = new byte[is.available()];
-                    is.read(data);
-                    os.write(data);
-                    is.close();
-                    os.close();
+					byte[] data = new byte[ is.available() ];
+					is.read( data );
+					os.write( data );
+					is.close();
+					os.close();
 
-                    success = true;
-                }
-                catch( final IOException e )
-                {
-                    e.printStackTrace();
-                }
-            }
-            return success;
-        }
+					success = true;
+				}
+				catch( final IOException e )
+				{
+					e.printStackTrace();
+				}
+			}
+			return success;
+		}
 
-        private boolean isExternalStorageWritable()
-        {
-            final boolean externalStorageAvailable;
-            final boolean externalStorageWritable;
+		private boolean isExternalStorageWritable()
+		{
+			final boolean externalStorageAvailable;
+			final boolean externalStorageWritable;
 
-            String state = Environment.getExternalStorageState();
-            if (Environment.MEDIA_MOUNTED.equals(state))
-            {
-                // We can read and write the media
-                externalStorageAvailable = externalStorageWritable = true;
-            }
-            else if (Environment.MEDIA_MOUNTED_READ_ONLY.equals(state))
-            {
-                // We can only read the media
-                externalStorageAvailable = true;
-                externalStorageWritable = false;
-            }
-            else
-            {
-                // Something else is wrong. It may be one of many other states, but all we need
-                //  to know is we can neither read nor write
-                externalStorageAvailable = externalStorageWritable = false;
-            }
+			String state = Environment.getExternalStorageState();
+			if( Environment.MEDIA_MOUNTED.equals( state ) )
+			{
+				// We can read and write the media
+				externalStorageAvailable = externalStorageWritable = true;
+			}
+			else if( Environment.MEDIA_MOUNTED_READ_ONLY.equals( state ) )
+			{
+				// We can only read the media
+				externalStorageAvailable = true;
+				externalStorageWritable = false;
+			}
+			else
+			{
+				// Something else is wrong. It may be one of many other states, but all we need
+				//  to know is we can neither read nor write
+				externalStorageAvailable = externalStorageWritable = false;
+			}
 
-            return externalStorageAvailable && externalStorageWritable;
-        }
-    }
+			return externalStorageAvailable && externalStorageWritable;
+		}
+	}
 
-    enum MenuItemType
-    {
-        Welcome,
-        Install,
-	    Purchase,
-	    Stop
-    };
+	enum MenuItemType
+	{
+		Welcome,
+		Install,
+		Purchase,
+		Stop
+	}
 
-    private class MenuAdapter extends BaseAdapter
-    {
-	    private List<MenuItemType> m_menuItems;
+	;
 
-	    public MenuAdapter()
-	    {
-		    m_menuItems = new ArrayList<>();
-		    refresh();
-	    }
+	private class MenuAdapter extends BaseAdapter
+	{
+		private List<MenuItemType> m_menuItems;
 
-	    public void refresh()
-	    {
-		    m_menuItems.clear();
+		public MenuAdapter()
+		{
+			m_menuItems = new ArrayList<>();
+			refresh();
+		}
 
-		    m_menuItems.add( MenuItemType.Welcome );
-		    m_menuItems.add( MenuItemType.Install );
-		    if( !isPro() )
-		    {
-			    m_menuItems.add( MenuItemType.Purchase );
-		    }
-		    m_menuItems.add( MenuItemType.Stop );
-	    }
+		public void refresh()
+		{
+			m_menuItems.clear();
 
-	    public boolean areAllItemsEnabled()
-        {
-            return false;
-        }
+			m_menuItems.add( MenuItemType.Welcome );
+			m_menuItems.add( MenuItemType.Install );
+			if( !isPro() )
+			{
+				m_menuItems.add( MenuItemType.Purchase );
+			}
+			m_menuItems.add( MenuItemType.Stop );
 
-	    public boolean isEnabled( final int position )
-	    {
-            return false;
-        }
+			notifyDataSetChanged();
+		}
 
-        public int getCount()
-        {
-	        return m_menuItems.size();
-        }
+		public boolean areAllItemsEnabled()
+		{
+			return false;
+		}
 
-        @Override
-        public Object getItem( final int position )
-        {
-	        return m_menuItems.get( position );
-        }
+		public boolean isEnabled( final int position )
+		{
+			return false;
+		}
 
-        @Override
-        public long getItemId( final int position )
-        {
-            return getItemViewType(position);
-        }
+		public int getCount()
+		{
+			return m_menuItems.size();
+		}
 
-        @Override
-        public View getView( final int position, final View convertView, final ViewGroup parent )
-        {
-            final View view;
-            if( convertView == null )
-            {
-                LayoutInflater inflater = LayoutInflater.from(MainActivity.this);
+		@Override
+		public Object getItem( final int position )
+		{
+			return m_menuItems.get( position );
+		}
 
-	            final MenuItemType type = (MenuItemType) getItem( position );
-	            switch( type )
-                {
-                    case Welcome:
-                        view = inflater.inflate( R.layout.row_welcome, parent, false );
-                        break;
-                    case Stop:
-                        view = inflater.inflate( R.layout.row_stop_ringing, parent, false );
-                        break;
-	                case Purchase:
-		                view = inflater.inflate( R.layout.row_purchase, parent, false );
-		                break;
-                    case Install:
-                        view = inflater.inflate( R.layout.row_install_watch_app, parent, false );
-                        break;
-                    default:
-                        view = null;
-                        break;
-                }
-            }
-            else
-            {
-                view = convertView;
-            }
+		@Override
+		public long getItemId( final int position )
+		{
+			return getItemViewType( position );
+		}
 
-            return view;
-        }
+		@Override
+		public View getView( final int position, final View convertView, final ViewGroup parent )
+		{
+			final View view;
+			if( convertView == null )
+			{
+				LayoutInflater inflater = LayoutInflater.from( MainActivity.this );
 
-        @Override
-        public int getItemViewType( final int position )
-        {
-	        return ((MenuItemType) getItem( position )).ordinal();
-        }
+				final MenuItemType type = (MenuItemType) getItem( position );
+				switch( type )
+				{
+					case Welcome:
+						view = inflater.inflate( R.layout.row_welcome, parent, false );
+						break;
+					case Stop:
+						view = inflater.inflate( R.layout.row_stop_ringing, parent, false );
+						break;
+					case Purchase:
+						view = inflater.inflate( R.layout.row_purchase, parent, false );
+						break;
+					case Install:
+						view = inflater.inflate( R.layout.row_install_watch_app, parent, false );
+						break;
+					default:
+						view = null;
+						break;
+				}
+			}
+			else
+			{
+				view = convertView;
+			}
 
-        @Override
-        public int getViewTypeCount()
-        {
-	        return MenuItemType.values().length;
-        }
+			return view;
+		}
 
-        @Override
-        public boolean isEmpty()
-        {
-            return false;
-        }
-    }
+		@Override
+		public int getItemViewType( final int position )
+		{
+			return ((MenuItemType) getItem( position )).ordinal();
+		}
+
+		@Override
+		public int getViewTypeCount()
+		{
+			return MenuItemType.values().length;
+		}
+
+		@Override
+		public boolean isEmpty()
+		{
+			return false;
+		}
+	}
 }
