@@ -16,11 +16,11 @@ public class Purchase
 	public static final Uri  PURCHASE_URI = Uri.parse( "ringmyphone://com.darkrockstudios.apps.ringmyphone/purchase" );
 	public static final long TRAIL_LENGTH = TimeUnit.DAYS.toMillis( 7 );
 	// For testing
-	//public static final long TRAIL_LENGTH = TimeUnit.HOURS.toMillis( 4 );
+	//public static final long TRIAL_LENGTH = TimeUnit.HOURS.toMillis( 4 );
 
 	public static boolean isActive( final Context context )
 	{
-		return isPurchased( context ) || !isTrailPeriodOver( context );
+		return isPurchased( context ) || !isTrialPeriodOver( context );
 	}
 
 	public static boolean isPurchased( final Context context )
@@ -29,7 +29,7 @@ public class Purchase
 		return settings.getBoolean( Preferences.KEY_IS_PRO, false );
 	}
 
-	public static boolean isTrailPeriodOver( final Context context )
+	public static boolean isTrialPeriodOver( final Context context )
 	{
 		boolean isPast = true;
 
@@ -47,5 +47,22 @@ public class Purchase
 		}
 
 		return isPast;
+	}
+
+	public static long trialTimeRemaining( final Context context )
+	{
+		long timeRemaining = -1;
+
+		SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences( context );
+		long installTimeStamp = settings.getLong( Preferences.KEY_FIRST_INSTALL_DATE, 0 );
+		if( installTimeStamp > 0 )
+		{
+			Date now = new Date();
+			long timeSinceInstall = now.getTime() - installTimeStamp;
+
+			timeRemaining = TRAIL_LENGTH - timeSinceInstall;
+		}
+
+		return timeRemaining;
 	}
 }

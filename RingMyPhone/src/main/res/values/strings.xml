@@ -12,6 +12,10 @@
     <string name="install_watch_app_description">Install the watch app to your Pebble. Come back here to install updates as they are released.</string>
     <string name="install_watch_app_failed_pebble">Pebble App not found. Could not complete install.</string>
     <string name="install_watch_app_failed_storage">External storage not available. Could not complete install.</string>
+    <string name="purchase_app_description">Welcome to the Ring My Phone trail! You can use this app for a week and see if you like it, after which it will stop working. You can either purchase it or uninstall it, or even keep it around as a memento of when it used to work!</string>
+    <string name="purchase_app_button">Purchase</string>
+    <string name="purchase_app_countdown">%1$dd %2$dh %3$dm remaining</string>
+    <string name="purchase_app_countdown_expired">trial expired</string>
     <string name="about_title">About</string>
     <string name="about_body_header">Dark Rock Studios</string>
     <string name="about_body_bio">Adam Brown (Wavesonics)</string>
@@ -23,7 +27,6 @@
     <string name="about_body_github_android"><a href="http://github.com/Wavesonics/RingMyPhoneAndroid">RingMyPhoneAndroid</a></string>
     <string name="about_body_github_pebble"><a href="http://github.com/Wavesonics/RingMyPhonePebble">RingMyPhonePebble</a></string>
     <string name="about_body_feedback"><i>Found a bug? Feature request?</i>\n<a href="https://github.com/Wavesonics/RingMyPhoneAndroid/issues/new">Log it here!</a></string>
-    <string name="purchase_app_button">Purchase</string>
 
     <string name="notification_expired_ticker">RingMyPhone trail expired</string>
     <string name="notification_expired_text">To keep using RingMyPhone please purchase it by clicking here.</string>
@@ -31,4 +34,5 @@
 
     <string name="notification_ringing_ticker">RingMyPhone is ringing</string>
     <string name="notification_ringing_text">Tap to silence ringing</string>
+
 </resources>

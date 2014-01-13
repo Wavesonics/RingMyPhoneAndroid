@@ -1,6 +1,9 @@
 package com.darkrockstudios.apps.ringmyphone;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -13,6 +16,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -21,6 +25,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
@@ -38,7 +43,8 @@ public class MainActivity extends BillingActivity implements BillingActivity.Pro
 	@InjectView(R.id.listView)
 	ListView m_listView;
 
-	private MenuAdapter m_menuAdapter;
+	private MenuAdapter  m_menuAdapter;
+	private TimeReceiver m_timeReceiver;
 
 	@Override
 	protected void onCreate( final Bundle savedInstanceState )
@@ -60,6 +66,16 @@ public class MainActivity extends BillingActivity implements BillingActivity.Pro
 	}
 
 	@Override
+	protected void onStart()
+	{
+		super.onStart();
+
+		m_timeReceiver = new TimeReceiver();
+		IntentFilter intentFilter = new IntentFilter( Intent.ACTION_TIME_TICK );
+		registerReceiver( m_timeReceiver, intentFilter );
+	}
+
+	@Override
 	protected void onResume()
 	{
 		super.onResume();
@@ -76,6 +92,15 @@ public class MainActivity extends BillingActivity implements BillingActivity.Pro
 		// Inflate the menu; this adds items to the action bar if it is present.
 		getMenuInflater().inflate( R.menu.main, menu );
 		return true;
+	}
+
+	@Override
+	protected void onStop()
+	{
+		super.onStop();
+
+		unregisterReceiver( m_timeReceiver );
+		m_timeReceiver = null;
 	}
 
 	@Override
@@ -281,9 +306,19 @@ public class MainActivity extends BillingActivity implements BillingActivity.Pro
 		Stop
 	}
 
-	;
+	private class TimeReceiver extends BroadcastReceiver
+	{
+		@Override
+		public void onReceive( final Context context, final Intent intent )
+		{
+			if( !isPro() )
+			{
+				m_menuAdapter.refresh();
+			}
+		}
+	}
 
-	private class MenuAdapter extends BaseAdapter
+	class MenuAdapter extends BaseAdapter
 	{
 		private List<MenuItemType> m_menuItems;
 
@@ -339,11 +374,12 @@ public class MainActivity extends BillingActivity implements BillingActivity.Pro
 		public View getView( final int position, final View convertView, final ViewGroup parent )
 		{
 			final View view;
+
+			final MenuItemType type = (MenuItemType) getItem( position );
 			if( convertView == null )
 			{
 				LayoutInflater inflater = LayoutInflater.from( MainActivity.this );
 
-				final MenuItemType type = (MenuItemType) getItem( position );
 				switch( type )
 				{
 					case Welcome:
@@ -368,7 +404,34 @@ public class MainActivity extends BillingActivity implements BillingActivity.Pro
 				view = convertView;
 			}
 
+			if( type == MenuItemType.Purchase )
+			{
+				setCountDown( (TextView) view.findViewById( R.id.purchase_app_count_down ) );
+			}
+
 			return view;
+		}
+
+		private void setCountDown( TextView countDownView )
+		{
+			long timeRemaining = Purchase.trialTimeRemaining( MainActivity.this );
+
+			if( timeRemaining > 0 )
+			{
+				final long days = TimeUnit.MILLISECONDS.toDays( timeRemaining );
+				timeRemaining -= TimeUnit.DAYS.toMillis( days );
+
+				final long hours = TimeUnit.MILLISECONDS.toHours( timeRemaining );
+				timeRemaining -= TimeUnit.HOURS.toMillis( hours );
+
+				final long minutes = TimeUnit.MILLISECONDS.toMinutes( timeRemaining );
+
+				countDownView.setText( getString( R.string.purchase_app_countdown, days, hours, minutes ) );
+			}
+			else
+			{
+				countDownView.setText( getString( R.string.purchase_app_countdown_expired ) );
+			}
 		}
 
 		@Override
