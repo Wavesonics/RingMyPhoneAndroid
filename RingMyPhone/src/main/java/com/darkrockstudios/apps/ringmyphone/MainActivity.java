@@ -1,13 +1,17 @@
 package com.darkrockstudios.apps.ringmyphone;
 
+import android.app.AlertDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
+import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -134,8 +138,7 @@ public class MainActivity extends BillingActivity implements BillingActivity.Pro
 	{
 		Log.i( TAG, "Installing Pebble App" );
 
-		PebbleAppInstaller installerTask = new PebbleAppInstaller();
-		installerTask.execute();
+		installPebbleApp( false );
 	}
 
 	public void onPurchaseClicked( final View v )
@@ -156,6 +159,43 @@ public class MainActivity extends BillingActivity implements BillingActivity.Pro
 		if( m_showPurchaseDialog )
 		{
 			m_showPurchaseDialog = !purchasePro();
+		}
+	}
+
+	private void installPebbleApp( final boolean skipWarning )
+	{
+		SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences( this );
+		if( skipWarning || settings.getBoolean( Preferences.KEY_OS2_0_WARNING_SHOWN, false ) )
+		{
+			PebbleAppInstaller installerTask = new PebbleAppInstaller();
+			installerTask.execute();
+		}
+		else
+		{
+			displayOsWarningDialog();
+		}
+	}
+
+	private void displayOsWarningDialog()
+	{
+		AlertDialog.Builder builder = new AlertDialog.Builder( this );
+		builder.setTitle( R.string.alsert_os_title );
+		builder.setIcon( R.drawable.ic_action_info );
+		builder.setMessage( R.string.alert_os_message );
+		builder.setPositiveButton( R.string.alert_os_positive_button, new OsWarningAcceptedListener() );
+		builder.setNegativeButton( R.string.alert_os_negative_button, null );
+		builder.create().show();
+	}
+
+	private class OsWarningAcceptedListener implements DialogInterface.OnClickListener
+	{
+		@Override
+		public void onClick( final DialogInterface dialog, final int which )
+		{
+			SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences( MainActivity.this );
+			settings.edit().putBoolean( Preferences.KEY_OS2_0_WARNING_SHOWN, true ).apply();
+
+			installPebbleApp( true );
 		}
 	}
 
@@ -412,7 +452,7 @@ public class MainActivity extends BillingActivity implements BillingActivity.Pro
 			return view;
 		}
 
-		private void setCountDown( TextView countDownView )
+		private void setCountDown( final TextView countDownView )
 		{
 			long timeRemaining = Purchase.trialTimeRemaining( MainActivity.this );
 
