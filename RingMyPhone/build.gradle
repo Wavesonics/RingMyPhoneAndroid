@@ -3,9 +3,10 @@ buildscript {
         mavenCentral()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:0.7.+'
+        classpath 'com.android.tools.build:gradle:0.8.+'
     }
 }
+
 apply plugin: 'android'
 
 repositories {
@@ -65,7 +66,7 @@ dependencies {
     // Support Libraries
     compile 'com.android.support:appcompat-v7:+'
     compile 'com.android.support:support-v13:+'
-    compile 'com.google.android.gms:play-services:4.+'
+    compile 'com.google.android.gms:play-services:4.1.32'
     compile 'com.google.guava:guava:15.0'
     compile 'com.jakewharton:butterknife:4.+'
 
