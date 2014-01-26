@@ -1,11 +1,13 @@
 package com.darkrockstudios.apps.ringmyphone;
 
-import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.support.v4.content.WakefulBroadcastReceiver;
 
-public class StopRingingReceiver extends BroadcastReceiver
+public class StopRingingReceiver extends WakefulBroadcastReceiver
 {
+	private static final String TAG = StopRingingReceiver.class.getSimpleName();
+
 	public StopRingingReceiver()
 	{
 	}
@@ -18,7 +20,7 @@ public class StopRingingReceiver extends BroadcastReceiver
 			Intent serviceIntent = new Intent( context, RingerService.class );
 			serviceIntent.setAction( RingerService.ACTION_STOP_RINGING );
 
-			context.startService( serviceIntent );
+			startWakefulService( context, serviceIntent );
 		}
 	}
 }

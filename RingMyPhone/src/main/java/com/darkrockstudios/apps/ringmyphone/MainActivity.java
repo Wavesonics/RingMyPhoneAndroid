@@ -42,7 +42,10 @@ public class MainActivity extends BillingActivity implements BillingActivity.Pro
 	private static final String TAG                = MainActivity.class.getSimpleName();
 	private static final String ABOUT_FRAGMENT_TAG = "AboutFragment";
 
+	public static final String ACTION_REQUEST_INSTALL = MainActivity.class.getName() + ".ACTION_REQUEST_INSTALL";
+
 	private boolean m_showPurchaseDialog;
+	private boolean m_showInstallDialog;
 
 	@InjectView(R.id.listView)
 	ListView m_listView;
@@ -62,10 +65,28 @@ public class MainActivity extends BillingActivity implements BillingActivity.Pro
 		m_menuAdapter = new MenuAdapter();
 		m_listView.setAdapter( m_menuAdapter );
 
-		Intent intent = getIntent();
-		if( intent != null && Purchase.PURCHASE_URI.equals( intent.getData() ) )
+		handleIntent( getIntent() );
+	}
+
+	@Override
+	protected void onNewIntent( final Intent intent )
+	{
+		handleIntent( intent );
+	}
+
+	private void handleIntent( final Intent intent )
+	{
+		if( intent != null )
 		{
-			m_showPurchaseDialog = true;
+			if( Purchase.PURCHASE_URI.equals( intent.getData() ) )
+			{
+				m_showPurchaseDialog = true;
+			}
+
+			if( ACTION_REQUEST_INSTALL.equals( intent.getAction() ) )
+			{
+				m_showInstallDialog = true;
+			}
 		}
 	}
 
@@ -87,6 +108,12 @@ public class MainActivity extends BillingActivity implements BillingActivity.Pro
 		if( m_showPurchaseDialog && purchasePro() )
 		{
 			m_showPurchaseDialog = false;
+		}
+
+		if( m_showInstallDialog )
+		{
+			m_showInstallDialog = false;
+			installPebbleApp();
 		}
 	}
 
@@ -138,7 +165,7 @@ public class MainActivity extends BillingActivity implements BillingActivity.Pro
 	{
 		Log.i( TAG, "Installing Pebble App" );
 
-		installPebbleApp( false );
+		installPebbleApp();
 	}
 
 	public void onPurchaseClicked( final View v )
@@ -162,6 +189,11 @@ public class MainActivity extends BillingActivity implements BillingActivity.Pro
 		}
 	}
 
+	private void installPebbleApp()
+	{
+		installPebbleApp( false );
+	}
+
 	private void installPebbleApp( final boolean skipWarning )
 	{
 		SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences( this );
@@ -180,7 +212,7 @@ public class MainActivity extends BillingActivity implements BillingActivity.Pro
 	{
 		AlertDialog.Builder builder = new AlertDialog.Builder( this );
 		builder.setTitle( R.string.alsert_os_title );
-		builder.setIcon( R.drawable.ic_action_info );
+		builder.setIcon( R.drawable.ic_action_warning );
 		builder.setMessage( R.string.alert_os_message );
 		builder.setPositiveButton( R.string.alert_os_positive_button, new OsWarningAcceptedListener() );
 		builder.setNegativeButton( R.string.alert_os_negative_button, null );
@@ -218,6 +250,11 @@ public class MainActivity extends BillingActivity implements BillingActivity.Pro
 			{
 				if( installPebbleApp() )
 				{
+					int installedVersion = getResources().getInteger( R.integer.pebble_app_version_code );
+
+					SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences( MainActivity.this );
+					settings.edit().putInt( Preferences.KEY_INSTALLED_APP_VERSION, installedVersion ).commit();
+
 					installCode = InstallCode.SUCCESS;
 				}
 				else

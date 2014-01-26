@@ -38,5 +38,7 @@
     <string name="alert_os_message">Please ensure you have updated your Pebble smart watch to OS 2.0 before installing this watch app. If you fail to do so, it will not work.</string>
     <string name="alert_os_positive_button">My Pebble is running OS 2.0</string>
     <string name="alert_os_negative_button">No, I need to update my Pebble</string>
+    <string name="notification_update_title">Update ready to install</string>
+    <string name="notification_update_text">Tap here to install the new RingMyPhone watch app</string>
 
 </resources>

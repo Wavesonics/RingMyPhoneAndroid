@@ -1,8 +1,8 @@
 package com.darkrockstudios.apps.ringmyphone;
 
-import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.support.v4.content.WakefulBroadcastReceiver;
 import android.util.Log;
 
 import com.getpebble.android.kit.Constants;
@@ -13,11 +13,11 @@ import java.util.UUID;
 /**
  * Created by Adam on 10/14/13.
  */
-public class PebbleMessageReceiver extends BroadcastReceiver
+public class PebbleMessageReceiver extends WakefulBroadcastReceiver
 {
 	private static final String TAG = PebbleMessageReceiver.class.getSimpleName();
 
-	public void onReceive( Context context, Intent intent )
+	public void onReceive( final Context context, final Intent intent )
 	{
 		if( Constants.INTENT_APP_RECEIVE.equals( intent.getAction() ) )
 		{
@@ -45,9 +45,9 @@ public class PebbleMessageReceiver extends BroadcastReceiver
 
 			Log.w( TAG, "Starting RingerService..." );
 			Intent serviceIntent = new Intent( context, RingerService.class );
-			serviceIntent.putExtra(Constants.TRANSACTION_ID, transactionId );
+			serviceIntent.putExtra( Constants.TRANSACTION_ID, transactionId );
 			serviceIntent.putExtra( Constants.MSG_DATA, jsonData );
-			context.startService( serviceIntent );
+			startWakefulService( context, serviceIntent );
 		}
 	}
 }
