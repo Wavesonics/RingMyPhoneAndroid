@@ -31,7 +31,7 @@ public class RingerService extends Service
 	private static final int CMD_KEY = 0x1;
 
 	private static final int CMD_START = 0x02;
-	private static final int CMD_STOP  = 0x02;
+	private static final int CMD_STOP = 0x03;
 
 	private PowerManager.WakeLock m_wakeLock;
 	private Ringtone              m_ringtone;
