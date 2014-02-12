@@ -32,6 +32,10 @@
     <string name="notification_expired_text">To keep using RingMyPhone please purchase it by clicking here.</string>
     <string name="notification_expired_purchase_button">Purchase</string>
 
+    <string name="notification_outofdate_ticker">RingMyPhone needs to update</string>
+    <string name="notification_outofdate_text">There is an update for the RingMyPhone watch app, update to it by tapping here.</string>
+    <string name="notification_outofdate_upgrade_button">Upgrade</string>
+
     <string name="notification_ringing_ticker">RingMyPhone is ringing</string>
     <string name="notification_ringing_text">Tap to silence ringing</string>
     <string name="alsert_os_title">Select Pebble OS</string>

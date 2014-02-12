@@ -2,7 +2,6 @@ package com.darkrockstudios.apps.ringmyphone;
 
 import android.app.Activity;
 import android.app.PendingIntent;
-import android.app.backup.BackupManager;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
@@ -88,16 +87,9 @@ public abstract class BillingActivity extends Activity
 	{
 		super.onCreate( savedInstanceState );
 
+		BillingSecurity.updateInstallDate( this );
+
 		SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences( this );
-		if( !settings.contains( Preferences.KEY_FIRST_INSTALL_DATE ) )
-		{
-			SharedPreferences.Editor editor = settings.edit();
-			editor.putLong( Preferences.KEY_FIRST_INSTALL_DATE, new Date().getTime() );
-			editor.commit();
-
-			BackupManager.dataChanged( getPackageName() );
-		}
-
 		m_isPro = settings.getBoolean( Preferences.KEY_IS_PRO, false );
 
 		m_serviceConn = new BillingServiceConnection();

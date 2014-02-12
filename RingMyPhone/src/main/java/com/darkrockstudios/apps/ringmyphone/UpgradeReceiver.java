@@ -21,6 +21,8 @@ public class UpgradeReceiver extends BroadcastReceiver
 		int installedAppVersion = settings.getInt( Preferences.KEY_INSTALLED_APP_VERSION, -1 );
 		int newAppVersion = context.getResources().getInteger( R.integer.pebble_app_version_code );
 
+		BillingSecurity.updateInstallDate( context );
+
 		// Only notify the user if there is a new watch app version
 		if( installedAppVersion < newAppVersion )
 		{

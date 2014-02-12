@@ -3,6 +3,11 @@ package com.darkrockstudios.apps.ringmyphone;
 /**
  * Created by Adam on 12/10/13.
  */
+
+import android.app.backup.BackupManager;
+import android.content.Context;
+import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
 import android.text.TextUtils;
 import android.util.Base64;
 import android.util.Log;
@@ -17,6 +22,7 @@ import java.security.Signature;
 import java.security.SignatureException;
 import java.security.spec.InvalidKeySpecException;
 import java.security.spec.X509EncodedKeySpec;
+import java.util.Date;
 
 /**
  * BillingSecurity-related methods. For a secure implementation, all of this code
@@ -188,4 +194,17 @@ public class BillingSecurity
         }
         return sb.toString();
     }
+
+	public static void updateInstallDate( final Context context )
+	{
+		SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences( context );
+		if( !settings.contains( Preferences.KEY_FIRST_INSTALL_DATE ) )
+		{
+			SharedPreferences.Editor editor = settings.edit();
+			editor.putLong( Preferences.KEY_FIRST_INSTALL_DATE, new Date().getTime() );
+			editor.commit();
+
+			BackupManager.dataChanged( context.getPackageName() );
+		}
+	}
 }

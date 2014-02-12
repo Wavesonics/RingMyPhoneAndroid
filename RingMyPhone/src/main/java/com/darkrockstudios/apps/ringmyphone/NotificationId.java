@@ -5,7 +5,8 @@ package com.darkrockstudios.apps.ringmyphone;
  */
 public class NotificationId
 {
-	public static final int TRIAL_EXPIRED = 1;
-	public static final int RINGING       = 2;
-	public static final int APP_UPDATE    = 3;
+	public static final int TRIAL_EXPIRED   = 1;
+	public static final int RINGING         = 2;
+	public static final int APP_UPDATE      = 3;
+	public static final int APP_OUT_OF_DATE = 4;
 }

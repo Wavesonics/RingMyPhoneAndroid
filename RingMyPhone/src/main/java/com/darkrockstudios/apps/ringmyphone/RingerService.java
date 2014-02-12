@@ -5,6 +5,7 @@ import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.drawable.BitmapDrawable;
 import android.media.AudioManager;
 import android.media.Ringtone;
@@ -12,13 +13,16 @@ import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.IBinder;
 import android.os.PowerManager;
+import android.preference.PreferenceManager;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
 import com.getpebble.android.kit.Constants;
 import com.getpebble.android.kit.util.PebbleDictionary;
 
+import org.json.JSONArray;
 import org.json.JSONException;
+import org.json.JSONObject;
 
 /**
  * Created by Adam on 10/14/13.
@@ -55,14 +59,30 @@ public class RingerService extends Service
 			{
 				if( Purchase.isActive( this ) )
 				{
+					SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences( this );
+					final int osVersion = settings.getInt( Preferences.KEY_OS_VERSION, -1 );
+
 					final int transactionId = intent.getIntExtra( Constants.TRANSACTION_ID, -1 );
 					final String jsonData = intent.getStringExtra( Constants.MSG_DATA );
 
 					try
 					{
-						final PebbleDictionary data = PebbleDictionary.fromJson( jsonData );
+						final long cmd;
+						if( osVersion == 1 )
+						{
+							cmd = getCommandv1( jsonData );
+						}
+						else if( osVersion == 2 )
+						{
+							final PebbleDictionary data = PebbleDictionary.fromJson( jsonData );
+							cmd = data.getUnsignedInteger( CMD_KEY );
+						}
+						else
+						{
+							postOutOfDateNotification();
+							cmd = -1;
+						}
 
-						long cmd = data.getUnsignedInteger( CMD_KEY );
 						if( cmd == CMD_START )
 						{
 							Log.w( TAG, "Ring Command Received!" );
@@ -92,6 +112,26 @@ public class RingerService extends Service
 		}
 
 		return START_NOT_STICKY;
+	}
+
+	/**
+	 * A hacky hack to allow Pebble OS 1.0 clients to work w\ the Pebble OS 2.0 SDK
+	 */
+	private int getCommandv1( final String json ) throws JSONException
+	{
+		int cmd = -1;
+
+		JSONArray jsonArray = new JSONArray( json );
+		if( jsonArray.length() > 0 )
+		{
+			JSONObject cmdObj = jsonArray.getJSONObject( 0 );
+			if( cmdObj != null )
+			{
+				cmd = cmdObj.getInt( "value" );
+			}
+		}
+
+		return cmd;
 	}
 
 	private void dismissRingingNotification()
@@ -139,6 +179,30 @@ public class RingerService extends Service
 		notificationManager.notify( NotificationId.TRIAL_EXPIRED, builder.build() );
 	}
 
+	private void postOutOfDateNotification()
+	{
+		NotificationCompat.Builder builder = new NotificationCompat.Builder( this );
+		builder.setTicker( getString( R.string.notification_outofdate_ticker ) );
+		builder.setContentTitle( getString( R.string.notification_outofdate_ticker ) );
+		builder.setContentText( getString( R.string.notification_outofdate_text ) );
+		builder.setSmallIcon( R.drawable.ic_action_download );
+
+		BitmapDrawable largeIcon = (BitmapDrawable) getResources().getDrawable( R.drawable.ic_launcher );
+		builder.setLargeIcon( largeIcon.getBitmap() );
+		builder.setContentIntent( createDefaultIntent() );
+
+		builder.setAutoCancel( true );
+		NotificationCompat.BigTextStyle bigStyle = new NotificationCompat.BigTextStyle();
+		bigStyle.bigText( getString( R.string.notification_outofdate_text ) );
+		builder.setStyle( bigStyle );
+
+		builder.addAction( R.drawable.ic_action_download, getString( R.string.notification_outofdate_upgrade_button ),
+		                   createUpgradeIntent() );
+
+		NotificationManager notificationManager = (NotificationManager) getSystemService( Context.NOTIFICATION_SERVICE );
+		notificationManager.notify( NotificationId.APP_OUT_OF_DATE, builder.build() );
+	}
+
 	private PendingIntent createStopRingingIntent()
 	{
 		Intent intent = new Intent( ACTION_STOP_RINGING );
@@ -159,6 +223,15 @@ public class RingerService extends Service
 	{
 		Intent intent = new Intent( this, MainActivity.class );
 		intent.setData( Purchase.PURCHASE_URI );
+
+		PendingIntent pendingIntent = PendingIntent.getActivity( this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT );
+		return pendingIntent;
+	}
+
+	private PendingIntent createUpgradeIntent()
+	{
+		Intent intent = new Intent( this, MainActivity.class );
+		intent.setAction( MainActivity.ACTION_REQUEST_INSTALL );
 
 		PendingIntent pendingIntent = PendingIntent.getActivity( this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT );
 		return pendingIntent;

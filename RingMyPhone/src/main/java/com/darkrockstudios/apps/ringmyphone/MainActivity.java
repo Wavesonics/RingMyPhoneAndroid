@@ -260,6 +260,7 @@ public class MainActivity extends BillingActivity implements BillingActivity.Pro
 
 					SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences( MainActivity.this );
 					settings.edit().putInt( Preferences.KEY_INSTALLED_APP_VERSION, installedVersion ).commit();
+					settings.edit().putInt( Preferences.KEY_OS_VERSION, (m_os == PebbleOsVersion.ONE ? 1 : 2) ).commit();
 
 					installCode = InstallCode.SUCCESS;
 				}
