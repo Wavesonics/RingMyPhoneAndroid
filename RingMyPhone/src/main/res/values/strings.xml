@@ -4,7 +4,7 @@
     <string name="app_name">RingMyPhone</string>
     <string name="action_about">About</string>
     <string name="welcome_title">Welcome to RingMyPhone!</string>
-    <string name="welcome_body">Install the Pebble 2.0 watch app, then just close this and use your Pebble to start your phone ringing.</string>
+    <string name="welcome_body">Install the Pebble watch app, then just close this and use your Pebble to start your phone ringing.</string>
     <string name="stop_button">Stop Ringing!</string>
     <string name="stop_button_response">Stopping Ringer…</string>
     <string name="stop_description">Maybe you lost your watch after ringing your phone, maybe other things, use this to silence your phone!</string>
@@ -34,10 +34,10 @@
 
     <string name="notification_ringing_ticker">RingMyPhone is ringing</string>
     <string name="notification_ringing_text">Tap to silence ringing</string>
-    <string name="alsert_os_title">Pebble OS 2.0 Required</string>
-    <string name="alert_os_message">Please ensure you have updated your Pebble smart watch to OS 2.0 before installing this watch app. If you fail to do so, it will not work.</string>
-    <string name="alert_os_positive_button">My Pebble is running OS 2.0</string>
-    <string name="alert_os_negative_button">No, I need to update my Pebble</string>
+    <string name="alsert_os_title">Select Pebble OS</string>
+    <string name="alert_os_message">Please select which Pebble OS version your watch is running. If you don\'t know, than it\'s probably 1.0. If you pick the wrong one just come back and try the other!</string>
+    <string name="alert_os_positive_button">Pebble OS 2.0</string>
+    <string name="alert_os_negative_button">Pebble OS 1.0</string>
     <string name="notification_update_title">Update ready to install</string>
     <string name="notification_update_text">Tap here to install the new RingMyPhone watch app</string>
 

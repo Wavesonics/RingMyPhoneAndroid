@@ -191,43 +191,41 @@ public class MainActivity extends BillingActivity implements BillingActivity.Pro
 
 	private void installPebbleApp()
 	{
-		installPebbleApp( false );
+		displayOsSelectDialog();
 	}
 
-	private void installPebbleApp( final boolean skipWarning )
-	{
-		SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences( this );
-		if( skipWarning || settings.getBoolean( Preferences.KEY_OS2_0_WARNING_SHOWN, false ) )
-		{
-			PebbleAppInstaller installerTask = new PebbleAppInstaller();
-			installerTask.execute();
-		}
-		else
-		{
-			displayOsWarningDialog();
-		}
-	}
-
-	private void displayOsWarningDialog()
+	private void displayOsSelectDialog()
 	{
 		AlertDialog.Builder builder = new AlertDialog.Builder( this );
 		builder.setTitle( R.string.alsert_os_title );
 		builder.setIcon( R.drawable.ic_action_warning );
 		builder.setMessage( R.string.alert_os_message );
-		builder.setPositiveButton( R.string.alert_os_positive_button, new OsWarningAcceptedListener() );
-		builder.setNegativeButton( R.string.alert_os_negative_button, null );
+		builder.setPositiveButton( R.string.alert_os_positive_button, new OsSelectListener( PebbleOsVersion.TWO ) );
+		builder.setNegativeButton( R.string.alert_os_negative_button, new OsSelectListener( PebbleOsVersion.ONE ) );
 		builder.create().show();
 	}
 
-	private class OsWarningAcceptedListener implements DialogInterface.OnClickListener
+	private static enum PebbleOsVersion
 	{
+		ONE, TWO
+	}
+
+	;
+
+	private class OsSelectListener implements DialogInterface.OnClickListener
+	{
+		private PebbleOsVersion m_os;
+
+		public OsSelectListener( final PebbleOsVersion os )
+		{
+			m_os = os;
+		}
+
 		@Override
 		public void onClick( final DialogInterface dialog, final int which )
 		{
-			SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences( MainActivity.this );
-			settings.edit().putBoolean( Preferences.KEY_OS2_0_WARNING_SHOWN, true ).apply();
-
-			installPebbleApp( true );
+			PebbleAppInstaller installerTask = new PebbleAppInstaller( m_os );
+			installerTask.execute();
 		}
 	}
 
@@ -240,13 +238,21 @@ public class MainActivity extends BillingActivity implements BillingActivity.Pro
 
 	private class PebbleAppInstaller extends AsyncTask<Void, Integer, InstallCode>
 	{
-		private final String PBW_FILE_NAME = "RingMyPhone.pbw";
+		private final String PBW_FILE_NAME_1_0 = "ringmyphone_1.pbw";
+		private final String PBW_FILE_NAME_2_0 = "ringmyphone_2.pbw";
+
+		private PebbleOsVersion m_os;
+
+		public PebbleAppInstaller( final PebbleOsVersion os )
+		{
+			m_os = os;
+		}
 
 		@Override
 		protected InstallCode doInBackground( final Void... params )
 		{
 			final InstallCode installCode;
-			if( copyRawFileToExternalStorage( R.raw.ringmyphone ) )
+			if( copyRawFileToExternalStorage( getPbwAssetId() ) )
 			{
 				if( installPebbleApp() )
 				{
@@ -289,12 +295,42 @@ public class MainActivity extends BillingActivity implements BillingActivity.Pro
 			}
 		}
 
+		private int getPbwAssetId()
+		{
+			final int assetId;
+			if( m_os == PebbleOsVersion.ONE )
+			{
+				assetId = R.raw.ringmyphone_1;
+			}
+			else
+			{
+				assetId = R.raw.ringmyphone_2;
+			}
+
+			return assetId;
+		}
+
+		private String getPbwFileName()
+		{
+			final String fileName;
+			if( m_os == PebbleOsVersion.ONE )
+			{
+				fileName = PBW_FILE_NAME_1_0;
+			}
+			else
+			{
+				fileName = PBW_FILE_NAME_2_0;
+			}
+
+			return fileName;
+		}
+
 		private boolean installPebbleApp()
 		{
 			boolean success = false;
 
 			File path = Environment.getExternalStoragePublicDirectory( Environment.DIRECTORY_DOWNLOADS );
-			File file = new File( path, PBW_FILE_NAME );
+			final File file = new File( path, getPbwFileName() );
 
 			String mimeType = "application/octet-stream";
 
@@ -322,7 +358,7 @@ public class MainActivity extends BillingActivity implements BillingActivity.Pro
 			if( isExternalStorageWritable() )
 			{
 				File path = Environment.getExternalStoragePublicDirectory( Environment.DIRECTORY_DOWNLOADS );
-				File file = new File( path, PBW_FILE_NAME );
+				File file = new File( path, getPbwFileName() );
 
 				try
 				{
