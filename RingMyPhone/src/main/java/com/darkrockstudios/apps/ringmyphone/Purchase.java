@@ -14,7 +14,7 @@ import java.util.concurrent.TimeUnit;
 public class Purchase
 {
 	public static final Uri  PURCHASE_URI = Uri.parse( "ringmyphone://com.darkrockstudios.apps.ringmyphone/purchase" );
-	public static final long TRAIL_LENGTH = TimeUnit.DAYS.toMillis( 7 );
+	public static final long TRIAL_LENGTH = TimeUnit.DAYS.toMillis( 7 );
 	// For testing
 	//public static final long TRIAL_LENGTH = TimeUnit.HOURS.toMillis( 4 );
 
@@ -40,7 +40,7 @@ public class Purchase
 			Date now = new Date();
 			long timeSinceInstall = now.getTime() - installTimeStamp;
 
-			if( timeSinceInstall < TRAIL_LENGTH )
+			if( timeSinceInstall < TRIAL_LENGTH )
 			{
 				isPast = false;
 			}
@@ -60,7 +60,7 @@ public class Purchase
 			Date now = new Date();
 			long timeSinceInstall = now.getTime() - installTimeStamp;
 
-			timeRemaining = TRAIL_LENGTH - timeSinceInstall;
+			timeRemaining = TRIAL_LENGTH - timeSinceInstall;
 		}
 
 		return timeRemaining;

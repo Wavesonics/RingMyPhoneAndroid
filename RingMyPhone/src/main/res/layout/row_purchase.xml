@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+             xmlns:tools="http://schemas.android.com/tools"
              android:layout_width="match_parent"
              android:layout_height="wrap_content"
              android:gravity="center">
@@ -19,7 +20,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textAppearance="?android:attr/textAppearanceMedium"
-            android:text="Welcome to the Ring My Phone trail! You can use this app for a week and see if you like it, after which it will stop working. You can either purchase it or uninstall it, or even keep it around as a momento of when it used to work!"
+            android:text="@string/purchase_app_description"
             android:layout_gravity="left|top"
             android:drawablePadding="@dimen/card_drawable_padding"
             android:drawableLeft="@drawable/ic_action_lock_open"/>
@@ -31,7 +32,7 @@
             android:textAppearance="?android:attr/textAppearanceMedium"
             android:textStyle="bold"
             android:gravity="right"
-            android:text="4d 5h 26m"
+            tools:text="4d 5h 26m"
             android:drawablePadding="@dimen/card_drawable_padding"/>
 
         <Button

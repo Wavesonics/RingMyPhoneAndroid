@@ -453,7 +453,14 @@ public class MainActivity extends BillingActivity implements BillingActivity.Pro
 			}
 			m_menuItems.add( MenuItemType.Stop );
 
-			notifyDataSetChanged();
+			runOnUiThread( new Runnable()
+			{
+				@Override
+				public void run()
+				{
+					notifyDataSetChanged();
+				}
+			} );
 		}
 
 		public boolean areAllItemsEnabled()
