@@ -65,43 +65,50 @@ public class RingerService extends Service
 					final int transactionId = intent.getIntExtra( Constants.TRANSACTION_ID, -1 );
 					final String jsonData = intent.getStringExtra( Constants.MSG_DATA );
 
-					try
+					if( jsonData != null )
 					{
-						final long cmd;
-						if( osVersion == 1 )
+						try
 						{
-							cmd = getCommandv1( jsonData );
-						}
-						else if( osVersion == 2 )
-						{
-							final PebbleDictionary data = PebbleDictionary.fromJson( jsonData );
-							cmd = data.getUnsignedInteger( CMD_KEY );
-						}
-						else
-						{
-							postOutOfDateNotification();
-							cmd = -1;
-						}
+							final long cmd;
+							if( osVersion == 1 )
+							{
+								cmd = getCommandv1( jsonData );
+							}
+							else if( osVersion == 2 )
+							{
+								final PebbleDictionary data = PebbleDictionary.fromJson( jsonData );
+								cmd = data.getUnsignedInteger( CMD_KEY );
+							}
+							else
+							{
+								postOutOfDateNotification();
+								cmd = -1;
+							}
 
-						if( cmd == CMD_START )
-						{
-							Log.w( TAG, "Ring Command Received!" );
-							setMaxVolume( this );
-							ringPhone( this );
+							if( cmd == CMD_START )
+							{
+								Log.w( TAG, "Ring Command Received!" );
+								setMaxVolume( this );
+								ringPhone( this );
+							}
+							else if( cmd == CMD_STOP )
+							{
+								Log.w( TAG, "Silence Command Received!" );
+								silencePhone( this );
+							}
+							else
+							{
+								Log.w( TAG, "Bad command received from pebble app: " + cmd );
+							}
 						}
-						else if( cmd == CMD_STOP )
+						catch( final JSONException e )
 						{
-							Log.w( TAG, "Silence Command Received!" );
-							silencePhone( this );
-						}
-						else
-						{
-							Log.w( TAG, "Bad command received from pebble app: " + cmd );
+							Log.w( TAG, "failed retrieved -> dict" + e );
 						}
 					}
-					catch( final JSONException e )
+					else
 					{
-						Log.w( TAG, "failed retrieved -> dict" + e );
+						Log.w( TAG, "No data from Pebble" );
 					}
 				}
 				else

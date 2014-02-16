@@ -444,21 +444,21 @@ public class MainActivity extends BillingActivity implements BillingActivity.Pro
 
 		public void refresh()
 		{
-			m_menuItems.clear();
-
-			m_menuItems.add( MenuItemType.Welcome );
-			m_menuItems.add( MenuItemType.Install );
-			if( !isPro() )
-			{
-				m_menuItems.add( MenuItemType.Purchase );
-			}
-			m_menuItems.add( MenuItemType.Stop );
-
 			runOnUiThread( new Runnable()
 			{
 				@Override
 				public void run()
 				{
+					m_menuItems.clear();
+
+					m_menuItems.add( MenuItemType.Welcome );
+					m_menuItems.add( MenuItemType.Install );
+					if( !isPro() )
+					{
+						m_menuItems.add( MenuItemType.Purchase );
+					}
+					m_menuItems.add( MenuItemType.Stop );
+
 					notifyDataSetChanged();
 				}
 			} );
