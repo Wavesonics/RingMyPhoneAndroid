@@ -15,7 +15,7 @@ repositories {
 
 android {
     compileSdkVersion 19
-    buildToolsVersion "19.0.1"
+    buildToolsVersion "19.0.2"
 
     defaultConfig {
         minSdkVersion 14
@@ -53,10 +53,10 @@ android {
         android.signingConfigs.release.keyPassword = keyPassword
     } else {
         println 'gradle.properties not well formed'
-        if(!project.hasProperty('storeFile')) println 'storeFile not defined'
-        if(!project.hasProperty('storePassword')) println 'storePassword not defined'
-        if(!project.hasProperty('keyAlias')) println 'keyAlias not defined'
-        if(!project.hasProperty('keyPassword')) println 'keyPassword not defined'
+        if (!project.hasProperty('storeFile')) println 'storeFile not defined'
+        if (!project.hasProperty('storePassword')) println 'storePassword not defined'
+        if (!project.hasProperty('keyAlias')) println 'keyAlias not defined'
+        if (!project.hasProperty('keyPassword')) println 'keyPassword not defined'
 
         buildTypes.release.signingConfig = null
     }
