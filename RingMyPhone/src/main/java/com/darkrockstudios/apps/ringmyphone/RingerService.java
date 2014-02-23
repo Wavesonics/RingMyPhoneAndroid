@@ -77,7 +77,14 @@ public class RingerService extends Service
 							else if( osVersion == 2 )
 							{
 								final PebbleDictionary data = PebbleDictionary.fromJson( jsonData );
-								cmd = data.getUnsignedInteger( CMD_KEY );
+								if( data != null )
+								{
+									cmd = data.getUnsignedInteger( CMD_KEY );
+								}
+								else
+								{
+									cmd = -1;
+								}
 							}
 							else
 							{

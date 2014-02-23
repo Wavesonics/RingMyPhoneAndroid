@@ -244,6 +244,7 @@ public abstract class BillingActivity extends Activity
 
 					if( PRODUCT_SKU_PRO.equals( sku ) &&
 					    verifyPurchase( purchaseData, dataSignature ) &&
+					    m_devPayload != null &&
 					    m_devPayload.equals( devPayload ) )
 					{
 						Log.d( TAG, "You have bought " + sku );
