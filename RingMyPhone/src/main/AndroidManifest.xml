@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
           package="com.darkrockstudios.apps.ringmyphone"
-          android:versionCode="9"
-          android:versionName="2.2">
+          android:versionCode="10"
+          android:versionName="2.3">
 
-<uses-permission android:name="android.permission.WAKE_LOCK"/>
+    <uses-permission android:name="android.permission.WAKE_LOCK"/>
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
     <uses-permission android:name="com.android.vending.BILLING"/>
 
@@ -31,6 +31,11 @@
 
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
+        </activity>
+
+        <activity
+            android:name="com.darkrockstudios.apps.ringmyphone.SettingsActivity"
+            android:label="@string/activity_title_settings">
         </activity>
 
         <receiver

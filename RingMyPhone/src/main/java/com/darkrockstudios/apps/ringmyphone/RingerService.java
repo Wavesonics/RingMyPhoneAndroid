@@ -29,8 +29,8 @@ import org.json.JSONObject;
  */
 public class RingerService extends Service
 {
-	private static final String TAG = RingerService.class.getSimpleName();
-	public static final String ACTION_STOP_RINGING = RingerService.class.getName() + ".STOP_RINGING";
+	private static final String TAG                 = RingerService.class.getSimpleName();
+	public static final  String ACTION_STOP_RINGING = RingerService.class.getName() + ".STOP_RINGING";
 
 	private static final int CMD_KEY = 0x1;
 
@@ -61,6 +61,7 @@ public class RingerService extends Service
 				{
 					SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences( this );
 					final int osVersion = settings.getInt( Preferences.KEY_OS_VERSION, -1 );
+					final boolean silentMode = settings.getBoolean( Preferences.KEY_SILENT_MODE, false );
 
 					final int transactionId = intent.getIntExtra( Constants.TRANSACTION_ID, -1 );
 					final String jsonData = intent.getStringExtra( Constants.MSG_DATA );
@@ -96,7 +97,7 @@ public class RingerService extends Service
 							{
 								Log.w( TAG, "Ring Command Received!" );
 								setMaxVolume( this );
-								ringPhone( this );
+								ringPhone( this, silentMode );
 							}
 							else if( cmd == CMD_STOP )
 							{
@@ -301,7 +302,7 @@ public class RingerService extends Service
 		releaseWakeLock( context );
 	}
 
-	private void ringPhone( final Context context )
+	private void ringPhone( final Context context, final boolean silentMode )
 	{
 		getWakeLock( context );
 
@@ -313,7 +314,7 @@ public class RingerService extends Service
 			m_ringtone = RingtoneManager.getRingtone( context, notification );
 		}
 
-		if( m_ringtone != null && !m_ringtone.isPlaying() )
+		if( m_ringtone != null && !m_ringtone.isPlaying() && !silentMode )
 		{
 			m_ringtone.play();
 		}

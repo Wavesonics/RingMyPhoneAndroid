@@ -137,15 +137,26 @@ public class MainActivity extends BillingActivity implements BillingActivity.Pro
 	@Override
 	public boolean onOptionsItemSelected( final MenuItem item )
 	{
+		final boolean handled;
 		// Handle item selection
 		switch( item.getItemId() )
 		{
 			case R.id.action_about:
 				showAbout();
-				return true;
+				handled = true;
+				break;
+			case R.id.action_settings:
+			{
+				Intent intent = new Intent( this, SettingsActivity.class );
+				startActivity( intent );
+				handled = true;
+			}
+			break;
 			default:
-				return super.onOptionsItemSelected( item );
+				handled = super.onOptionsItemSelected( item );
 		}
+
+		return handled;
 	}
 
 	private void showAbout()
