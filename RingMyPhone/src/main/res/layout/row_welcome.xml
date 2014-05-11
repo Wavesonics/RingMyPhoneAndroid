@@ -20,7 +20,6 @@
             android:padding="@dimen/card_inner_padding"
             android:textAppearance="?android:attr/textAppearanceLarge"
             android:text="@string/welcome_title"
-            android:id="@+id/textView"
             android:textStyle="bold" />
 
         <TextView
@@ -28,8 +27,7 @@
             android:layout_height="wrap_content"
             android:padding="@dimen/card_inner_padding"
             android:textAppearance="?android:attr/textAppearanceMedium"
-            android:text="@string/welcome_body"
-            android:id="@+id/textView" />
+            android:text="@string/welcome_body" />
 
     </LinearLayout>
 
