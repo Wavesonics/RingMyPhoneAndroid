@@ -3,7 +3,7 @@ buildscript {
         mavenCentral()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:0.8.+'
+        classpath 'com.android.tools.build:gradle:0.10.+'
     }
 }
 
@@ -15,7 +15,7 @@ repositories {
 
 android {
     compileSdkVersion 19
-    buildToolsVersion "19.0.2"
+    buildToolsVersion "19.0.3"
 
     defaultConfig {
         minSdkVersion 14
@@ -39,6 +39,10 @@ android {
             zipAlign true
             signingConfig signingConfigs.release
         }
+    }
+
+    lintOptions {
+        abortOnError false
     }
 
     // Read our private signing details from the local properties file
@@ -66,9 +70,9 @@ dependencies {
     // Support Libraries
     compile 'com.android.support:appcompat-v7:+'
     compile 'com.android.support:support-v13:+'
-    compile 'com.google.android.gms:play-services:4.1.32'
-    compile 'com.google.guava:guava:15.0'
-    compile 'com.jakewharton:butterknife:4.+'
+    compile 'com.google.android.gms:play-services:4.3.+'
+    compile 'com.google.guava:guava:17.0'
+    compile 'com.jakewharton:butterknife:5.0.1'
 
     compile 'de.keyboardsurfer.android.widget:crouton:1.8.2'
 }
