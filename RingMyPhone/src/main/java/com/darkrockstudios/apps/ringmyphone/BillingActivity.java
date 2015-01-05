@@ -1,5 +1,6 @@
 package com.darkrockstudios.apps.ringmyphone;
 
+import android.annotation.SuppressLint;
 import android.app.PendingIntent;
 import android.content.ComponentName;
 import android.content.Context;
@@ -169,13 +170,8 @@ public abstract class BillingActivity extends ActionBarActivity
 							cacheProLocally();
 							m_isPro = true;
 
-              /*
-              // Consume the purchase for dev reset purposes
-              JSONObject jo = new JSONObject( purchaseData );
-              String token = jo.getString( "purchaseToken" );
-              int consumeResponse = m_service.consumePurchase( 3, getPackageName(), token );
-              Log.d( TAG, "Purchase consumed!");
-              */
+							// Uncomment to consume your purchase, this is only for testing the purchase process
+							//Debug.consumePurchase( purchaseData, m_service, getPackageName() );
 						}
 					}
 				}
@@ -211,9 +207,9 @@ public abstract class BillingActivity extends ActionBarActivity
 
 					startIntentSenderForResult( pendingIntent.getIntentSender(),
 					                            1001, new Intent(),
-					                            Integer.valueOf( 0 ),
-					                            Integer.valueOf( 0 ),
-					                            Integer.valueOf( 0 ) );
+					                            0,
+					                            0,
+					                            0 );
 					shown = true;
 				}
 			}
@@ -277,6 +273,7 @@ public abstract class BillingActivity extends ActionBarActivity
 		return BillingSecurity.sha1Hash( fudge + "noh4xplz" );
 	}
 
+	@SuppressLint("CommitPrefEdits")
 	private void cacheProLocally()
 	{
 		SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences( this );
