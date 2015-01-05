@@ -1,16 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.darkrockstudios.apps.ringmyphone"
-    android:versionCode="11"
-    android:versionName="2.4">
+          package="com.darkrockstudios.apps.ringmyphone">
 
-    <uses-permission android:name="android.permission.WAKE_LOCK" />
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-    <uses-permission android:name="com.android.vending.BILLING" />
-
-    <uses-sdk
-        android:minSdkVersion="14"
-        android:targetSdkVersion="19" />
+    <uses-permission android:name="android.permission.WAKE_LOCK"/>
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="com.android.vending.BILLING"/>
 
     <application
         android:allowBackup="true"
@@ -20,45 +14,45 @@
         android:theme="@style/AppTheme">
         <meta-data
             android:name="com.google.android.backup.api_key"
-            android:value="AEdPqrEAAAAI9RVjjuoczaLcOvbT-BvIx_9BbnvfPjL3q6sedA" />
+            android:value="AEdPqrEAAAAI9RVjjuoczaLcOvbT-BvIx_9BbnvfPjL3q6sedA"/>
 
         <activity
             android:name="com.darkrockstudios.apps.ringmyphone.MainActivity"
             android:label="@string/app_name"
             android:launchMode="singleTop">
             <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
+                <action android:name="android.intent.action.MAIN"/>
 
-                <category android:name="android.intent.category.LAUNCHER" />
+                <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
 
         <activity
             android:name="com.darkrockstudios.apps.ringmyphone.SettingsActivity"
-            android:label="@string/activity_title_settings"></activity>
+            android:label="@string/activity_title_settings"/>
 
         <receiver
             android:name="com.darkrockstudios.apps.ringmyphone.PebbleMessageReceiver"
             android:exported="true">
             <intent-filter>
-                <action android:name="com.getpebble.action.app.RECEIVE" />
+                <action android:name="com.getpebble.action.app.RECEIVE"/>
             </intent-filter>
         </receiver>
 
-        <service android:name="com.darkrockstudios.apps.ringmyphone.RingerService" />
+        <service android:name="com.darkrockstudios.apps.ringmyphone.RingerService"/>
 
         <receiver
             android:name="com.darkrockstudios.apps.ringmyphone.StopRingingReceiver"
             android:exported="true">
             <intent-filter>
-                <action android:name="com.darkrockstudios.apps.ringmyphone.RingerService.STOP_RINGING" />
+                <action android:name="com.darkrockstudios.apps.ringmyphone.RingerService.STOP_RINGING"/>
             </intent-filter>
         </receiver>
         <receiver
             android:name="com.darkrockstudios.apps.ringmyphone.UpgradeReceiver"
             android:exported="true">
             <intent-filter>
-                <action android:name="android.intent.action.MY_PACKAGE_REPLACED" />
+                <action android:name="android.intent.action.MY_PACKAGE_REPLACED"/>
             </intent-filter>
         </receiver>
     </application>

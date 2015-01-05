@@ -1,6 +1,5 @@
 package com.darkrockstudios.apps.ringmyphone;
 
-import android.app.Activity;
 import android.app.PendingIntent;
 import android.content.ComponentName;
 import android.content.Context;
@@ -12,6 +11,7 @@ import android.os.Bundle;
 import android.os.IBinder;
 import android.os.RemoteException;
 import android.preference.PreferenceManager;
+import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
 
 import com.android.vending.billing.IInAppBillingService;
@@ -25,7 +25,7 @@ import java.util.Date;
 /**
  * Created by Adam on 12/10/13.
  */
-public abstract class BillingActivity extends Activity
+public abstract class BillingActivity extends ActionBarActivity
 {
 	private static final String TAG             = BillingActivity.class.getSimpleName();
 	private static final String PRODUCT_SKU_PRO = "ringmyphone_pro";
@@ -98,8 +98,9 @@ public abstract class BillingActivity extends Activity
 
 	private void connectToService()
 	{
-		bindService( new Intent( "com.android.vending.billing.InAppBillingService.BIND" ),
-		             m_serviceConn, Context.BIND_AUTO_CREATE );
+		Intent intent = new Intent( "com.android.vending.billing.InAppBillingService.BIND" );
+		intent.setPackage( "com.android.vending" );
+		bindService( intent, m_serviceConn, Context.BIND_AUTO_CREATE );
 	}
 
 	@Override
