@@ -11,6 +11,7 @@ apply plugin: 'com.android.application'
 
 repositories {
     mavenCentral()
+    maven { url "https://oss.sonatype.org/content/groups/public/" }
 }
 
 android {
@@ -75,7 +76,9 @@ dependencies {
     compile 'com.android.support:support-v13:21.0.3'
     compile 'com.google.android.gms:play-services:6.5.87'
     compile 'com.google.guava:guava:18.0'
-    compile 'com.jakewharton:butterknife:5.0.1'
+    compile 'com.jakewharton:butterknife:6.0.0'
+
+    compile 'com.getpebble:pebblekit:2.6.0'
 
     compile('de.keyboardsurfer.android.widget:crouton:1.8.5@aar') {
         exclude group: 'com.google.android', module: 'support-v4'

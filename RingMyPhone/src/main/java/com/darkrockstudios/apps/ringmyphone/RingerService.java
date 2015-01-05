@@ -1,5 +1,6 @@
 package com.darkrockstudios.apps.ringmyphone;
 
+import android.annotation.TargetApi;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
@@ -7,10 +8,12 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.drawable.BitmapDrawable;
+import android.media.AudioAttributes;
 import android.media.AudioManager;
 import android.media.Ringtone;
 import android.media.RingtoneManager;
 import android.net.Uri;
+import android.os.Build;
 import android.os.IBinder;
 import android.os.PowerManager;
 import android.preference.PreferenceManager;
@@ -68,12 +71,15 @@ public class RingerService extends Service
 						try
 						{
 							final long cmd;
-                            final PebbleDictionary data = PebbleDictionary.fromJson(jsonData);
-                            if (data != null) {
-                                cmd = data.getUnsignedInteger(CMD_KEY);
-                            } else {
-                                cmd = -1;
-                            }
+							final PebbleDictionary data = PebbleDictionary.fromJson( jsonData );
+							if( data != null )
+							{
+								cmd = data.getUnsignedIntegerAsLong( CMD_KEY );
+							}
+							else
+							{
+								cmd = -1;
+							}
 
 							if( cmd == CMD_START )
 							{
@@ -231,6 +237,7 @@ public class RingerService extends Service
 		releaseWakeLock( context );
 	}
 
+	@TargetApi(Build.VERSION_CODES.LOLLIPOP)
 	private void ringPhone( final Context context, final boolean silentMode )
 	{
 		getWakeLock( context );
@@ -245,6 +252,19 @@ public class RingerService extends Service
 
 		if( m_ringtone != null && !m_ringtone.isPlaying() && !silentMode )
 		{
+			if( OsUtil.atLeastLollipop() )
+			{
+				AudioAttributes audioAttributes = new AudioAttributes.Builder()
+						                                  .setUsage( AudioAttributes.USAGE_NOTIFICATION_RINGTONE )
+						                                  .setContentType( AudioAttributes.CONTENT_TYPE_SONIFICATION )
+						                                  .setFlags( AudioAttributes.FLAG_AUDIBILITY_ENFORCED )
+						                                  .build();
+				m_ringtone.setAudioAttributes( audioAttributes );
+			}
+			else
+			{
+				m_ringtone.setStreamType( AudioManager.STREAM_RING );
+			}
 			m_ringtone.play();
 		}
 	}
