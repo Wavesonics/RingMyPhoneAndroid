@@ -26,7 +26,7 @@ public class Purchase
 	public static boolean isPurchased( final Context context )
 	{
 		SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences( context );
-		return settings.getBoolean( Preferences.KEY_IS_PRO, false );
+		return true;
 	}
 
 	public static boolean isTrialPeriodOver( final Context context )
