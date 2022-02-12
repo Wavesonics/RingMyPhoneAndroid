@@ -25,6 +25,7 @@ public class AboutFragment extends DialogFragment implements View.OnClickListene
 {
 	private FragmentAboutBinding binding;
 
+	@Override
 	public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
 	{
 		binding = FragmentAboutBinding.inflate(inflater, container, false);
