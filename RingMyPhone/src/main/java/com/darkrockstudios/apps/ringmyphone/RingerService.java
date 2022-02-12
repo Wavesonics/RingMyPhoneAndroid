@@ -1,6 +1,7 @@
 package com.darkrockstudios.apps.ringmyphone;
 
 import android.annotation.TargetApi;
+import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
@@ -32,17 +33,30 @@ public class RingerService extends Service
 {
 	private static final String TAG                 = RingerService.class.getSimpleName();
 	public static final  String ACTION_STOP_RINGING = RingerService.class.getName() + ".STOP_RINGING";
+	private static final String RINGS_NOTIFICATION_CHANNEL = "ringsNotificationChannel";
 
 	private static final int CMD_KEY = 0x1;
 
 	private static final int CMD_START = 0x01;
 	private static final int CMD_STOP  = 0x02;
 
+	public static void createNotificationChannels(Context context) {
+		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+			CharSequence name = context.getString(R.string.notification_channel_rings_name);
+			int importance = NotificationManager.IMPORTANCE_HIGH;
+			NotificationChannel channel = new NotificationChannel(RINGS_NOTIFICATION_CHANNEL, name, importance);
+			// Register the channel with the system; you can't change the importance
+			// or other notification behaviors after this
+			NotificationManager notificationManager = context.getSystemService(NotificationManager.class);
+			notificationManager.createNotificationChannel(channel);
+		}
+	}
+
 	private PowerManager.WakeLock m_wakeLock;
 	private Ringtone              m_ringtone;
 	private int                   m_savedVolume;
 
-	public IBinder onBind( final Intent intent )
+	public IBinder onBind(final Intent intent )
 	{
 		return null;
 	}
@@ -118,7 +132,7 @@ public class RingerService extends Service
 
 	private void postRingingNotification()
 	{
-		NotificationCompat.Builder builder = new NotificationCompat.Builder( this );
+		NotificationCompat.Builder builder = new NotificationCompat.Builder( this, RINGS_NOTIFICATION_CHANNEL );
 		builder.setTicker( getString( R.string.notification_ringing_ticker ) );
 		builder.setContentTitle( getString( R.string.notification_ringing_ticker ) );
 		builder.setContentText( getString( R.string.notification_ringing_text ) );

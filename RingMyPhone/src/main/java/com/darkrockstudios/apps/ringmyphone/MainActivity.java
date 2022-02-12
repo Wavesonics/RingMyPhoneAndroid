@@ -32,6 +32,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(view);
         MenuAdapter m_menuAdapter = new MenuAdapter();
         binding.listView.setAdapter(m_menuAdapter);
+        RingerService.createNotificationChannels(this);
     }
 
     @Override

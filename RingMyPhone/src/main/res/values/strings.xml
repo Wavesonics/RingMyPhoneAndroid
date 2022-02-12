@@ -24,6 +24,7 @@
 
     <string name="notification_ringing_ticker">RingMyPhone is ringing</string>
     <string name="notification_ringing_text">Tap to silence ringing</string>
+    <string name="notification_channel_rings_name">Rings</string>
 
     <string name="activity_title_settings">Settings</string>
     <string name="pref_title_general">General</string>
