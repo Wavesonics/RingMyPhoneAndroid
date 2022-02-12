@@ -153,14 +153,6 @@ public class RingerService extends Service
 		return pendingIntent;
 	}
 
-	private PendingIntent createDefaultIntent()
-	{
-		Intent intent = new Intent( this, MainActivity.class );
-
-		PendingIntent pendingIntent = PendingIntent.getActivity( this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT );
-		return pendingIntent;
-	}
-
 	@Override
 	public void onDestroy()
 	{
@@ -208,7 +200,7 @@ public class RingerService extends Service
 
 		dismissRingingNotification();
 
-		releaseWakeLock( context );
+		releaseWakeLock();
 	}
 
 	@TargetApi(Build.VERSION_CODES.LOLLIPOP)
@@ -254,7 +246,7 @@ public class RingerService extends Service
 		}
 	}
 
-	private void releaseWakeLock( final Context context )
+	private void releaseWakeLock()
 	{
 		if( m_wakeLock != null )
 		{

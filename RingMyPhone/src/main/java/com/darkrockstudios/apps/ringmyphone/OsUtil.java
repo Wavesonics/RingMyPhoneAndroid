@@ -9,11 +9,6 @@ import java.lang.reflect.Field;
  */
 public class OsUtil
 {
-	public static boolean atLeastICS()
-	{
-		return osAtLeast( Build.VERSION_CODES.ICE_CREAM_SANDWICH );
-	}
-
 	public static boolean atLeastLollipop()
 	{
 		return osAtLeast( Build.VERSION_CODES.LOLLIPOP );
