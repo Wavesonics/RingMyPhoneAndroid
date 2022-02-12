@@ -2,7 +2,7 @@ package com.darkrockstudios.apps.ringmyphone;
 
 import android.content.Context;
 import android.content.Intent;
-import android.support.v4.content.WakefulBroadcastReceiver;
+import androidx.legacy.content.WakefulBroadcastReceiver;
 
 public class StopRingingReceiver extends WakefulBroadcastReceiver
 {
