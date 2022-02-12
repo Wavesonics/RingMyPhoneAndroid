@@ -1,18 +1,18 @@
 package com.darkrockstudios.apps.ringmyphone;
 
 import android.os.Bundle;
-import android.preference.PreferenceFragment;
+
+import androidx.preference.PreferenceFragmentCompat;
+
 
 /**
  * Created by adam on 3/2/14.
  */
-public class SettingsFragment extends PreferenceFragment
+public class SettingsFragment extends PreferenceFragmentCompat
 {
 	@Override
-	public void onCreate( Bundle savedInstanceState )
+	public void onCreatePreferences( Bundle savedInstanceState, String rootKey )
 	{
-		super.onCreate( savedInstanceState );
-
-		addPreferencesFromResource( R.xml.settings );
+		setPreferencesFromResource(R.xml.settings, rootKey);
 	}
 }

@@ -15,8 +15,9 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.IBinder;
 import android.os.PowerManager;
-import android.preference.PreferenceManager;
 import androidx.core.app.NotificationCompat;
+import androidx.preference.PreferenceManager;
+
 import android.util.Log;
 
 import com.getpebble.android.kit.Constants;
