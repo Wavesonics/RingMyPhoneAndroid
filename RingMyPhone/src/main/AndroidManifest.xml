@@ -4,7 +4,6 @@
 
     <uses-permission android:name="android.permission.WAKE_LOCK"/>
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
-    <uses-permission android:name="com.android.vending.BILLING"/>
 
     <application
         android:allowBackup="true"
@@ -48,13 +47,7 @@
                 <action android:name="com.darkrockstudios.apps.ringmyphone.RingerService.STOP_RINGING"/>
             </intent-filter>
         </receiver>
-        <receiver
-            android:name="com.darkrockstudios.apps.ringmyphone.UpgradeReceiver"
-            android:exported="true">
-            <intent-filter>
-                <action android:name="android.intent.action.MY_PACKAGE_REPLACED"/>
-            </intent-filter>
-        </receiver>
+
     </application>
 
 </manifest>

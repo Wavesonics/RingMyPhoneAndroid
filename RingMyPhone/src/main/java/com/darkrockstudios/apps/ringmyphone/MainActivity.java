@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -25,17 +26,14 @@ import de.keyboardsurfer.android.widget.crouton.Configuration;
 import de.keyboardsurfer.android.widget.crouton.Crouton;
 import de.keyboardsurfer.android.widget.crouton.Style;
 
-public class MainActivity extends BillingActivity implements BillingActivity.ProStatusListener {
+public class MainActivity extends AppCompatActivity {
     private static final String TAG = MainActivity.class.getSimpleName();
     private static final String ABOUT_FRAGMENT_TAG = "AboutFragment";
-
-    private boolean m_showPurchaseDialog;
 
     @InjectView(R.id.listView)
     ListView m_listView;
 
     private MenuAdapter m_menuAdapter;
-    private TimeReceiver m_timeReceiver;
 
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
@@ -43,43 +41,18 @@ public class MainActivity extends BillingActivity implements BillingActivity.Pro
         setContentView(R.layout.activity_main);
         ButterKnife.inject(this);
 
-        setProStatusListener(this);
-
         m_menuAdapter = new MenuAdapter();
         m_listView.setAdapter(m_menuAdapter);
-
-        handleIntent(getIntent());
-    }
-
-    @Override
-    protected void onNewIntent(final Intent intent) {
-        handleIntent(intent);
-    }
-
-    private void handleIntent(final Intent intent) {
-        if (intent != null) {
-            if (Purchase.PURCHASE_URI.equals(intent.getData())) {
-                m_showPurchaseDialog = true;
-            }
-        }
     }
 
     @Override
     protected void onStart() {
         super.onStart();
-
-        m_timeReceiver = new TimeReceiver();
-        IntentFilter intentFilter = new IntentFilter(Intent.ACTION_TIME_TICK);
-        registerReceiver(m_timeReceiver, intentFilter);
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-
-        if (m_showPurchaseDialog && purchasePro()) {
-            m_showPurchaseDialog = false;
-        }
     }
 
     @Override
@@ -92,9 +65,6 @@ public class MainActivity extends BillingActivity implements BillingActivity.Pro
     @Override
     protected void onStop() {
         super.onStop();
-
-        unregisterReceiver(m_timeReceiver);
-        m_timeReceiver = null;
     }
 
     @Override
@@ -130,36 +100,9 @@ public class MainActivity extends BillingActivity implements BillingActivity.Pro
         stopService(new Intent(this, RingerService.class));
     }
 
-    public void onPurchaseClicked(final View v) {
-        Log.i(TAG, "Purchasing App");
-
-        purchasePro();
-    }
-
-    @Override
-    public void onProStatusUpdate(final boolean isPro) {
-        m_menuAdapter.refresh();
-    }
-
-    protected void onBillingServiceConnected() {
-        if (m_showPurchaseDialog) {
-            m_showPurchaseDialog = !purchasePro();
-        }
-    }
-
     enum MenuItemType {
         Welcome,
-        Purchase,
         Stop
-    }
-
-    private class TimeReceiver extends BroadcastReceiver {
-        @Override
-        public void onReceive(final Context context, final Intent intent) {
-            if (!isPro()) {
-                m_menuAdapter.refresh();
-            }
-        }
     }
 
     class MenuAdapter extends BaseAdapter {
@@ -177,9 +120,6 @@ public class MainActivity extends BillingActivity implements BillingActivity.Pro
                     m_menuItems.clear();
 
                     m_menuItems.add(MenuItemType.Welcome);
-                    if (!isPro()) {
-                        m_menuItems.add(MenuItemType.Purchase);
-                    }
                     m_menuItems.add(MenuItemType.Stop);
 
                     notifyDataSetChanged();
@@ -224,9 +164,6 @@ public class MainActivity extends BillingActivity implements BillingActivity.Pro
                     case Stop:
                         view = inflater.inflate(R.layout.row_stop_ringing, parent, false);
                         break;
-                    case Purchase:
-                        view = inflater.inflate(R.layout.row_purchase, parent, false);
-                        break;
                     default:
                         view = null;
                         break;
@@ -235,29 +172,7 @@ public class MainActivity extends BillingActivity implements BillingActivity.Pro
                 view = convertView;
             }
 
-            if (type == MenuItemType.Purchase) {
-                setCountDown((TextView) view.findViewById(R.id.purchase_app_count_down));
-            }
-
             return view;
-        }
-
-        private void setCountDown(final TextView countDownView) {
-            long timeRemaining = Purchase.trialTimeRemaining(MainActivity.this);
-
-            if (timeRemaining > 0) {
-                final long days = TimeUnit.MILLISECONDS.toDays(timeRemaining);
-                timeRemaining -= TimeUnit.DAYS.toMillis(days);
-
-                final long hours = TimeUnit.MILLISECONDS.toHours(timeRemaining);
-                timeRemaining -= TimeUnit.HOURS.toMillis(hours);
-
-                final long minutes = TimeUnit.MILLISECONDS.toMinutes(timeRemaining);
-
-                countDownView.setText(getString(R.string.purchase_app_countdown, days, hours, minutes));
-            } else {
-                countDownView.setText(getString(R.string.purchase_app_countdown_expired));
-            }
         }
 
         @Override

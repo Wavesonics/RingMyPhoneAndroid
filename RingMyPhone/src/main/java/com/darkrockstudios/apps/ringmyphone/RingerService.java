@@ -58,58 +58,51 @@ public class RingerService extends Service
 			}
 			else
 			{
-				if( Purchase.isActive( this ) )
+				SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences( this );
+				final boolean silentMode = settings.getBoolean( Preferences.KEY_SILENT_MODE, false );
+
+				final int transactionId = intent.getIntExtra( Constants.TRANSACTION_ID, -1 );
+				final String jsonData = intent.getStringExtra( Constants.MSG_DATA );
+
+				if( jsonData != null )
 				{
-					SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences( this );
-					final boolean silentMode = settings.getBoolean( Preferences.KEY_SILENT_MODE, false );
-
-					final int transactionId = intent.getIntExtra( Constants.TRANSACTION_ID, -1 );
-					final String jsonData = intent.getStringExtra( Constants.MSG_DATA );
-
-					if( jsonData != null )
+					try
 					{
-						try
+						final long cmd;
+						final PebbleDictionary data = PebbleDictionary.fromJson( jsonData );
+						if( data != null )
 						{
-							final long cmd;
-							final PebbleDictionary data = PebbleDictionary.fromJson( jsonData );
-							if( data != null )
-							{
-								cmd = data.getUnsignedIntegerAsLong( CMD_KEY );
-							}
-							else
-							{
-								cmd = -1;
-							}
-
-							if( cmd == CMD_START )
-							{
-								Log.w( TAG, "Ring Command Received!" );
-								setMaxVolume( this );
-								ringPhone( this, silentMode );
-							}
-							else if( cmd == CMD_STOP )
-							{
-								Log.w( TAG, "Silence Command Received!" );
-								silencePhone( this );
-							}
-							else
-							{
-								Log.w( TAG, "Bad command received from pebble app: " + cmd );
-							}
+							cmd = data.getUnsignedIntegerAsLong( CMD_KEY );
 						}
-						catch( final JSONException e )
+						else
 						{
-							Log.w( TAG, "failed retrieved -> dict" + e );
+							cmd = -1;
+						}
+
+						if( cmd == CMD_START )
+						{
+							Log.w( TAG, "Ring Command Received!" );
+							setMaxVolume( this );
+							ringPhone( this, silentMode );
+						}
+						else if( cmd == CMD_STOP )
+						{
+							Log.w( TAG, "Silence Command Received!" );
+							silencePhone( this );
+						}
+						else
+						{
+							Log.w( TAG, "Bad command received from pebble app: " + cmd );
 						}
 					}
-					else
+					catch( final JSONException e )
 					{
-						Log.w( TAG, "No data from Pebble" );
+						Log.w( TAG, "failed retrieved -> dict" + e );
 					}
 				}
 				else
 				{
-					postExpiredNotification();
+					Log.w( TAG, "No data from Pebble" );
 				}
 			}
 		}
@@ -138,30 +131,6 @@ public class RingerService extends Service
 		notificationManager.notify( NotificationId.RINGING, builder.build() );
 	}
 
-	private void postExpiredNotification()
-	{
-		NotificationCompat.Builder builder = new NotificationCompat.Builder( this );
-		builder.setTicker( getString( R.string.notification_expired_ticker ) );
-		builder.setContentTitle( getString( R.string.notification_expired_ticker ) );
-		builder.setContentText( getString( R.string.notification_expired_text ) );
-		builder.setSmallIcon( R.drawable.ic_stat_clock );
-
-		BitmapDrawable largeIcon = (BitmapDrawable) getResources().getDrawable( R.drawable.ic_launcher );
-		builder.setLargeIcon( largeIcon.getBitmap() );
-		builder.setContentIntent( createDefaultIntent() );
-
-		builder.setAutoCancel( true );
-		NotificationCompat.BigTextStyle bigStyle = new NotificationCompat.BigTextStyle();
-		bigStyle.bigText( getString( R.string.notification_expired_text ) );
-		builder.setStyle( bigStyle );
-
-		builder.addAction( R.drawable.ic_notification_lock_open, getString( R.string.notification_expired_purchase_button ),
-		                   createPurchaseIntent() );
-
-		NotificationManager notificationManager = (NotificationManager) getSystemService( Context.NOTIFICATION_SERVICE );
-		notificationManager.notify( NotificationId.TRIAL_EXPIRED, builder.build() );
-	}
-
 	private PendingIntent createStopRingingIntent()
 	{
 		Intent intent = new Intent( ACTION_STOP_RINGING );
@@ -173,15 +142,6 @@ public class RingerService extends Service
 	private PendingIntent createDefaultIntent()
 	{
 		Intent intent = new Intent( this, MainActivity.class );
-
-		PendingIntent pendingIntent = PendingIntent.getActivity( this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT );
-		return pendingIntent;
-	}
-
-	private PendingIntent createPurchaseIntent()
-	{
-		Intent intent = new Intent( this, MainActivity.class );
-		intent.setData( Purchase.PURCHASE_URI );
 
 		PendingIntent pendingIntent = PendingIntent.getActivity( this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT );
 		return pendingIntent;
