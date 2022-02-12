@@ -2,6 +2,8 @@ package com.darkrockstudios.apps.ringmyphone;
 
 import android.app.Activity;
 import android.app.Dialog;
+
+import androidx.annotation.NonNull;
 import androidx.fragment.app.DialogFragment;
 import android.content.Intent;
 import android.content.pm.PackageInfo;
@@ -13,43 +15,41 @@ import android.text.method.MovementMethod;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.TextView;
+
+import com.darkrockstudios.apps.ringmyphone.databinding.FragmentAboutBinding;
 
 /**
  * Created by adam on 10/20/13.
  */
 public class AboutFragment extends DialogFragment implements View.OnClickListener
 {
-	public View onCreateView( LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState )
+	private FragmentAboutBinding binding;
+
+	public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
 	{
-		View view = inflater.inflate( R.layout.fragment_about, container, false );
+		binding = FragmentAboutBinding.inflate(inflater, container, false);
+		View view = binding.getRoot();
 
 		Dialog dialog = getDialog();
 		if( dialog != null )
 		{
-			dialog.setTitle( R.string.about_title );
+			dialog.setTitle(R.string.about_title);
 		}
 
-		Button marketButton = (Button) view.findViewById( R.id.ABOUT_market_button );
-		marketButton.setOnClickListener( this );
+		binding.marketButton.setOnClickListener( this );
 
 		MovementMethod linkMovementMethod = LinkMovementMethod.getInstance();
 
-		TextView githubAndroidView = (TextView) view.findViewById( R.id.ABOUT_github_android );
-		githubAndroidView.setMovementMethod( linkMovementMethod );
-		githubAndroidView.setText( getText( R.string.about_body_github_android ) );
+		binding.githubAndroid.setMovementMethod( linkMovementMethod );
+		binding.githubAndroid.setText( getText( R.string.about_body_github_android ) );
 
-		TextView githubPebbleView = (TextView) view.findViewById( R.id.ABOUT_github_pebble );
-		githubPebbleView.setMovementMethod( linkMovementMethod );
-		githubPebbleView.setText( getText( R.string.about_body_github_pebble ) );
+		binding.githubPebble.setMovementMethod( linkMovementMethod );
+		binding.githubPebble.setText( getText( R.string.about_body_github_pebble ) );
 
-		TextView githubFeedbackView = (TextView) view.findViewById( R.id.ABOUT_feedback );
-		githubFeedbackView.setMovementMethod( linkMovementMethod);
-		githubFeedbackView.setText( getText( R.string.about_body_feedback ) );
+		binding.feedback.setMovementMethod( linkMovementMethod);
+		binding.feedback.setText( getText( R.string.about_body_feedback ) );
 
-		TextView versionView = (TextView) view.findViewById( R.id.ABOUT_app_version );
-		versionView.setText( "v" + getAppVersion() );
+		binding.appVersion.setText(getString(R.string.about_body_version, getAppVersion()));
 
 		return view;
 	}
@@ -57,7 +57,7 @@ public class AboutFragment extends DialogFragment implements View.OnClickListene
 	@Override
 	public void onClick( View v )
 	{
-		if( v.getId() == R.id.ABOUT_market_button && isAdded() )
+		if( v.getId() == binding.marketButton.getId() && isAdded() )
 		{
 			Intent intent = new Intent( Intent.ACTION_VIEW );
 			intent.setData( Uri.parse( "market://search?q=pub:Dark+Rock+Studios" ) );
