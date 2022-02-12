@@ -12,7 +12,7 @@ import android.os.Bundle;
 import android.os.IBinder;
 import android.os.RemoteException;
 import android.preference.PreferenceManager;
-import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 
 import com.android.vending.billing.IInAppBillingService;
@@ -26,7 +26,7 @@ import java.util.Date;
 /**
  * Created by Adam on 12/10/13.
  */
-public abstract class BillingActivity extends ActionBarActivity
+public abstract class BillingActivity extends AppCompatActivity
 {
 	private static final String TAG             = BillingActivity.class.getSimpleName();
 	private static final String PRODUCT_SKU_PRO = "ringmyphone_pro";
