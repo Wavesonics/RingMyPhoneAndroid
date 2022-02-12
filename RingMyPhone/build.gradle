@@ -12,7 +12,6 @@ apply plugin: 'com.android.application'
 
 repositories {
     mavenCentral()
-    maven { url "https://oss.sonatype.org/content/groups/public/" }
 }
 
 android {
