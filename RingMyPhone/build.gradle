@@ -1,9 +1,10 @@
 buildscript {
     repositories {
+        google()
         mavenCentral()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:1.1.0'
+        classpath 'com.android.tools.build:gradle:7.0.4'
     }
 }
 
@@ -67,21 +68,18 @@ android {
 
         buildTypes.release.signingConfig = null
     }
-    dexOptions {
-        incremental true
-    }
 }
 
 dependencies {
     // Support Libraries
-    compile 'com.android.support:support-annotations:22.0.0'
-    compile 'com.android.support:appcompat-v7:22.0.0'
-    compile 'com.android.support:support-v13:22.0.0'
-    compile 'com.google.android.gms:play-services-base:7.0.0'
-    compile 'com.google.guava:guava:18.0'
-    compile 'com.jakewharton:butterknife:6.0.0'
-    compile 'com.getpebble:pebblekit:3.0.0@aar'
-    compile('de.keyboardsurfer.android.widget:crouton:1.8.5@aar') {
+    implementation 'com.android.support:support-annotations:22.0.0'
+    implementation 'com.android.support:appcompat-v7:22.0.0'
+    implementation 'com.android.support:support-v13:22.0.0'
+    implementation 'com.google.android.gms:play-services-base:7.0.0'
+    implementation 'com.google.guava:guava:18.0'
+    implementation 'com.jakewharton:butterknife:6.0.0'
+    implementation 'com.getpebble:pebblekit:3.0.0@aar'
+    implementation('de.keyboardsurfer.android.widget:crouton:1.8.5@aar') {
         exclude group: 'com.google.android', module: 'support-v4'
     }
 }
