@@ -9,6 +9,10 @@ android {
     compileSdkVersion 31
     buildToolsVersion '32.0.0'
 
+    buildFeatures {
+        viewBinding true
+    }
+
     defaultConfig {
         minSdkVersion 14
         targetSdkVersion 22
@@ -66,7 +70,6 @@ dependencies {
     implementation 'androidx.appcompat:appcompat:1.4.1'
     implementation 'androidx.legacy:legacy-support-v13:1.0.0'
     implementation 'com.google.guava:guava:31.0.1-android'
-    implementation 'com.jakewharton:butterknife:6.0.0'
     implementation 'com.getpebble:pebblekit:3.0.0@aar'
     implementation('de.keyboardsurfer.android.widget:crouton:1.8.5@aar') {
         exclude group: 'com.google.android', module: 'support-v4'

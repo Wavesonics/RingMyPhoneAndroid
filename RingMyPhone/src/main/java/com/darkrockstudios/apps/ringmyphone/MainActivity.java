@@ -10,13 +10,12 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
-import android.widget.ListView;
+
+import com.darkrockstudios.apps.ringmyphone.databinding.ActivityMainBinding;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import butterknife.ButterKnife;
-import butterknife.InjectView;
 import de.keyboardsurfer.android.widget.crouton.Configuration;
 import de.keyboardsurfer.android.widget.crouton.Crouton;
 import de.keyboardsurfer.android.widget.crouton.Style;
@@ -25,19 +24,18 @@ public class MainActivity extends AppCompatActivity {
     private static final String TAG = MainActivity.class.getSimpleName();
     private static final String ABOUT_FRAGMENT_TAG = "AboutFragment";
 
-    @InjectView(R.id.listView)
-    ListView m_listView;
+    private ActivityMainBinding binding;
 
     private MenuAdapter m_menuAdapter;
 
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-        ButterKnife.inject(this);
-
+        binding = ActivityMainBinding.inflate(getLayoutInflater());
+        View view = binding.getRoot();
+        setContentView(view);
         m_menuAdapter = new MenuAdapter();
-        m_listView.setAdapter(m_menuAdapter);
+        binding.listView.setAdapter(m_menuAdapter);
     }
 
     @Override
