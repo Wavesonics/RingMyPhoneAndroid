@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import androidx.legacy.content.WakefulBroadcastReceiver;
 
+// TODO(Noah): Replace deprecated WakefulBroadcastReceiver
 public class StopRingingReceiver extends WakefulBroadcastReceiver
 {
 	private static final String TAG = StopRingingReceiver.class.getSimpleName();

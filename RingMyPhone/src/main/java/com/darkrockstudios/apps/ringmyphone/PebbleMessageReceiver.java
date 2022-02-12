@@ -13,6 +13,7 @@ import java.util.UUID;
 /**
  * Created by Adam on 10/14/13.
  */
+// TODO(Noah): Replace deprecated WakefulBroadcastReceiver
 public class PebbleMessageReceiver extends WakefulBroadcastReceiver
 {
 	private static final String TAG = PebbleMessageReceiver.class.getSimpleName();
