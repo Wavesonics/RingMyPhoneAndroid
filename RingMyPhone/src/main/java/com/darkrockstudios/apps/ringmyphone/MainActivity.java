@@ -24,17 +24,13 @@ public class MainActivity extends AppCompatActivity {
     private static final String TAG = MainActivity.class.getSimpleName();
     private static final String ABOUT_FRAGMENT_TAG = "AboutFragment";
 
-    private ActivityMainBinding binding;
-
-    private MenuAdapter m_menuAdapter;
-
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        binding = ActivityMainBinding.inflate(getLayoutInflater());
+        ActivityMainBinding binding = ActivityMainBinding.inflate(getLayoutInflater());
         View view = binding.getRoot();
         setContentView(view);
-        m_menuAdapter = new MenuAdapter();
+        MenuAdapter m_menuAdapter = new MenuAdapter();
         binding.listView.setAdapter(m_menuAdapter);
     }
 
@@ -63,28 +59,22 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(final MenuItem item) {
         final boolean handled;
-        // Handle item selection
-        switch (item.getItemId()) {
-            case R.id.action_about:
-                showAbout();
-                handled = true;
-                break;
-            case R.id.action_settings: {
-                Intent intent = new Intent(this, SettingsActivity.class);
-                startActivity(intent);
-                handled = true;
-            }
-            break;
-            default:
-                handled = super.onOptionsItemSelected(item);
+        if (item.getItemId() == R.id.action_about) {
+            showAbout();
+            handled = true;
+        } else if (item.getItemId() == R.id.action_settings) {
+            Intent intent = new Intent(this, SettingsActivity.class);
+            startActivity(intent);
+            handled = true;
+        } else {
+            handled = super.onOptionsItemSelected(item);
         }
-
         return handled;
     }
 
     private void showAbout() {
         AboutFragment aboutFragment = new AboutFragment();
-        aboutFragment.show(getFragmentManager(), ABOUT_FRAGMENT_TAG);
+        aboutFragment.show(getSupportFragmentManager(), ABOUT_FRAGMENT_TAG);
     }
 
     public void onStopClicked(final View v) {
@@ -99,7 +89,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     class MenuAdapter extends BaseAdapter {
-        private List<MenuItemType> m_menuItems;
+        final private List<MenuItemType> m_menuItems;
 
         public MenuAdapter() {
             m_menuItems = new ArrayList<>();
@@ -107,16 +97,13 @@ public class MainActivity extends AppCompatActivity {
         }
 
         public void refresh() {
-            runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    m_menuItems.clear();
+            runOnUiThread(() -> {
+                m_menuItems.clear();
 
-                    m_menuItems.add(MenuItemType.Welcome);
-                    m_menuItems.add(MenuItemType.Stop);
+                m_menuItems.add(MenuItemType.Welcome);
+                m_menuItems.add(MenuItemType.Stop);
 
-                    notifyDataSetChanged();
-                }
+                notifyDataSetChanged();
             });
         }
 
