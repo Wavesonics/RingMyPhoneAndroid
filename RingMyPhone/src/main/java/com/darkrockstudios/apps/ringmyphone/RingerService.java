@@ -53,6 +53,9 @@ public class RingerService extends Service {
         }
     }
 
+    private AudioManager audioManager;
+    private NotificationManager notificationManager;
+    private PowerManager powerManager;
     private PowerManager.WakeLock wakeLock;
     private Ringtone ringtone;
     private boolean currentlyOverridingVolume = false;
@@ -61,6 +64,12 @@ public class RingerService extends Service {
 
     public IBinder onBind(final Intent intent) {
         return null;
+    }
+
+    @Override public void onCreate() {
+        audioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
+        notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+        powerManager = (PowerManager) getSystemService(Context.POWER_SERVICE);
     }
 
     @Override
@@ -81,7 +90,7 @@ public class RingerService extends Service {
 
                         if (cmd == CMD_START) {
                             Log.i(TAG, "Ring Command Received");
-                            setMaxVolume(this);
+                            setMaxVolume();
                             ringPhone(this, silentMode);
                         } else if (cmd == CMD_STOP) {
                             Log.i(TAG, "Silence Command Received");
@@ -102,7 +111,6 @@ public class RingerService extends Service {
     }
 
     private void dismissRingingNotification() {
-        NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
         notificationManager.cancel(NotificationId.RINGING);
     }
 
@@ -118,7 +126,6 @@ public class RingerService extends Service {
         builder.setContentIntent(createStopRingingIntent());
         builder.setOngoing(true);
 
-        NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
         notificationManager.notify(NotificationId.RINGING, builder.build());
     }
 
@@ -139,9 +146,7 @@ public class RingerService extends Service {
         silencePhone(this);
     }
 
-    private void setMaxVolume(final Context context) {
-        NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
-
+    private void setMaxVolume() {
         // TODO(Noah): If we cannot ring the phone because of DND mode, notify the watch app
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             int interruptionFilter = notificationManager.getCurrentInterruptionFilter();
@@ -158,38 +163,34 @@ public class RingerService extends Service {
             }
         }
 
-        AudioManager am =
-                (AudioManager) context.getSystemService(Context.AUDIO_SERVICE);
 
         // If the current ringer mode is RINGER_MODE_VIBRATE, then the ring volume will be
         // remembered as 0, which is not correct. To get the user's real ringer volume, we set
         // the ringer mode to RINGER_MODE_NORMAL first, and only then look up the ring volume.
         // Tested on Android 12.
 
-        savedRingerMode = am.getRingerMode();
+        savedRingerMode = audioManager.getRingerMode();
         Log.i(TAG, "Remembering current ringer mode: " + savedRingerMode);
 
-        am.setRingerMode(AudioManager.RINGER_MODE_NORMAL);
+        audioManager.setRingerMode(AudioManager.RINGER_MODE_NORMAL);
 
-        savedVolume = am.getStreamVolume(AudioManager.STREAM_RING);
+        savedVolume = audioManager.getStreamVolume(AudioManager.STREAM_RING);
         Log.i(TAG, "Remembering current volume: " + savedVolume);
 
         audioManager.setStreamVolume(
                 AudioManager.STREAM_RING,
-                am.getStreamMaxVolume(AudioManager.STREAM_MUSIC),
+                audioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC),
                 0);
         currentlyOverridingVolume = true;
     }
 
     private void restorePreviousVolume(final Context context) {
         if (currentlyOverridingVolume) {
-            AudioManager am =
-                    (AudioManager) context.getSystemService(Context.AUDIO_SERVICE);
-
             Log.i(TAG, "Restoring volume to " + savedVolume);
-            am.setStreamVolume(AudioManager.STREAM_RING, savedVolume, 0);
+            audioManager.setStreamVolume(AudioManager.STREAM_RING, savedVolume, 0);
+
             Log.i(TAG, "Restoring ringer mode to " + savedRingerMode);
-            am.setRingerMode(savedRingerMode);
+            audioManager.setRingerMode(savedRingerMode);
             currentlyOverridingVolume = false;
         } else {
             Log.w(TAG, "Was not currently overriding the volume and ringer mode");
@@ -213,7 +214,7 @@ public class RingerService extends Service {
     }
 
     private void ringPhone(final Context context, final boolean silentMode) {
-        getWakeLock(context);
+        getWakeLock();
 
         postRingingNotification();
 
@@ -237,10 +238,9 @@ public class RingerService extends Service {
         }
     }
 
-    private void getWakeLock(final Context context) {
+    private void getWakeLock() {
         if (wakeLock == null) {
-            PowerManager pm = (PowerManager) context.getSystemService(Context.POWER_SERVICE);
-            wakeLock = pm.newWakeLock(PowerManager.FULL_WAKE_LOCK |
+            wakeLock = powerManager.newWakeLock(PowerManager.FULL_WAKE_LOCK |
                     PowerManager.ACQUIRE_CAUSES_WAKEUP, TAG);
             wakeLock.acquire(5 * 60 * 1000L /* 5 minutes */);
         }
