@@ -17,7 +17,8 @@
             android:text="@string/about_body_header"
             android:layout_gravity="start|center_vertical"
             android:linksClickable="true"
-            android:textStyle="bold"/>
+            android:textStyle="bold"
+            android:layout_marginBottom="@dimen/about_fragment_spacing" />
 
         <TextView
             android:layout_width="wrap_content"
