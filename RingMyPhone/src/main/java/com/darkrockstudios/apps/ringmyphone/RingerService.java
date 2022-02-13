@@ -1,6 +1,6 @@
 package com.darkrockstudios.apps.ringmyphone;
 
-import android.annotation.TargetApi;
+import android.annotation.SuppressLint;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
@@ -76,8 +76,6 @@ public class RingerService extends Service
 			{
 				SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences( this );
 				final boolean silentMode = settings.getBoolean( Preferences.KEY_SILENT_MODE, false );
-
-				final int transactionId = intent.getIntExtra( Constants.TRANSACTION_ID, -1 );
 				final String jsonData = intent.getStringExtra( Constants.MSG_DATA );
 
 				if( jsonData != null )
@@ -86,14 +84,7 @@ public class RingerService extends Service
 					{
 						final long cmd;
 						final PebbleDictionary data = PebbleDictionary.fromJson( jsonData );
-						if( data != null )
-						{
-							cmd = data.getUnsignedIntegerAsLong( CMD_KEY );
-						}
-						else
-						{
-							cmd = -1;
-						}
+						cmd = data.getUnsignedIntegerAsLong( CMD_KEY );
 
 						if( cmd == CMD_START )
 						{
@@ -132,6 +123,7 @@ public class RingerService extends Service
 		notificationManager.cancel( NotificationId.RINGING );
 	}
 
+	@SuppressLint("LaunchActivityFromNotification")
 	private void postRingingNotification()
 	{
 		NotificationCompat.Builder builder = new NotificationCompat.Builder( this, RINGS_NOTIFICATION_CHANNEL );
@@ -150,9 +142,12 @@ public class RingerService extends Service
 	private PendingIntent createStopRingingIntent()
 	{
 		Intent intent = new Intent( ACTION_STOP_RINGING );
+		int flags = PendingIntent.FLAG_UPDATE_CURRENT;
+		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+			flags |= PendingIntent.FLAG_IMMUTABLE;
+		}
 
-		PendingIntent pendingIntent = PendingIntent.getBroadcast( this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT );
-		return pendingIntent;
+		return PendingIntent.getBroadcast(this, 0, intent, flags );
 	}
 
 	@Override
@@ -243,7 +238,7 @@ public class RingerService extends Service
 			PowerManager pm = (PowerManager) context.getSystemService( Context.POWER_SERVICE );
 			m_wakeLock = pm.newWakeLock( PowerManager.FULL_WAKE_LOCK |
 			                             PowerManager.ACQUIRE_CAUSES_WAKEUP, TAG );
-			m_wakeLock.acquire();
+			m_wakeLock.acquire(5 * 60 * 1000L /* 5 minutes */);
 		}
 	}
 
