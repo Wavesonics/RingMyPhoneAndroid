@@ -15,7 +15,8 @@ android {
 
     defaultConfig {
         minSdkVersion 14
-        targetSdkVersion 22
+        //noinspection ExpiredTargetSdkVersion
+        targetSdkVersion 25
         versionCode 13
         versionName '2.6'
     }
