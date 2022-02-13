@@ -205,7 +205,6 @@ public class RingerService extends Service
 		releaseWakeLock();
 	}
 
-	@TargetApi(Build.VERSION_CODES.LOLLIPOP)
 	private void ringPhone( final Context context, final boolean silentMode )
 	{
 		getWakeLock( context );
@@ -220,7 +219,7 @@ public class RingerService extends Service
 
 		if( m_ringtone != null && !m_ringtone.isPlaying() && !silentMode )
 		{
-			if( OsUtil.atLeastLollipop() )
+			if( android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP )
 			{
 				AudioAttributes audioAttributes = new AudioAttributes.Builder()
 						                                  .setUsage( AudioAttributes.USAGE_NOTIFICATION_RINGTONE )
