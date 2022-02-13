@@ -218,23 +218,25 @@ public class RingerService extends Service {
 
         postRingingNotification();
 
-        if (ringtone == null) {
-            Uri notification = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_RINGTONE);
-            ringtone = RingtoneManager.getRingtone(context, notification);
-        }
-
-        if (ringtone != null && !ringtone.isPlaying() && !silentMode) {
-            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
-                AudioAttributes audioAttributes = new AudioAttributes.Builder()
-                        .setUsage(AudioAttributes.USAGE_NOTIFICATION_RINGTONE)
-                        .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
-                        .setFlags(AudioAttributes.FLAG_AUDIBILITY_ENFORCED)
-                        .build();
-                ringtone.setAudioAttributes(audioAttributes);
-            } else {
-                ringtone.setStreamType(AudioManager.STREAM_RING);
+        if (!silentMode) {
+            if (ringtone == null) {
+                Uri notification = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_RINGTONE);
+                ringtone = RingtoneManager.getRingtone(context, notification);
             }
-            ringtone.play();
+
+            if (ringtone != null && !ringtone.isPlaying()) {
+                if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
+                    AudioAttributes audioAttributes = new AudioAttributes.Builder()
+                            .setUsage(AudioAttributes.USAGE_NOTIFICATION_RINGTONE)
+                            .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
+                            .setFlags(AudioAttributes.FLAG_AUDIBILITY_ENFORCED)
+                            .build();
+                    ringtone.setAudioAttributes(audioAttributes);
+                } else {
+                    ringtone.setStreamType(AudioManager.STREAM_RING);
+                }
+                ringtone.play();
+            }
         }
     }
 
