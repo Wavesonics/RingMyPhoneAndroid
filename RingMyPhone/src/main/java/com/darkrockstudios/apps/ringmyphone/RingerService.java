@@ -146,7 +146,7 @@ public class RingerService extends Service {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             int interruptionFilter = notificationManager.getCurrentInterruptionFilter();
             Log.d(TAG, "Current interruption filter: " + interruptionFilter);
-            if (interruptionFilter != NotificationManager.INTERRUPTION_FILTER_NONE) {
+            if (interruptionFilter != NotificationManager.INTERRUPTION_FILTER_ALL) {
                 Log.i(TAG, "Detected Do Not Disturb mode");
                 if (notificationManager.isNotificationPolicyAccessGranted()) {
                     Log.i(TAG, "We have permission to override Do Not Disturb mode");
