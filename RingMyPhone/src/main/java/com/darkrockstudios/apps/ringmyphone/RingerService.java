@@ -139,6 +139,24 @@ public class RingerService extends Service {
     }
 
     private void setMaxVolume(final Context context) {
+        NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+
+        // TODO(Noah): If we cannot ring the phone because of DND mode, notify the watch app
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            int interruptionFilter = notificationManager.getCurrentInterruptionFilter();
+            Log.d(TAG, "Current interruption filter: " + interruptionFilter);
+            if (interruptionFilter != NotificationManager.INTERRUPTION_FILTER_NONE) {
+                Log.i(TAG, "Detected Do Not Disturb mode");
+                if (notificationManager.isNotificationPolicyAccessGranted()) {
+                    Log.i(TAG, "We have permission to override Do Not Disturb mode");
+                } else {
+                    Log.i(TAG, "We do not have permission to override Do Not Disturb mode. "
+                            + "Leaving the volume as-is.");
+                    return;
+                }
+            }
+        }
+
         AudioManager am =
                 (AudioManager) context.getSystemService(Context.AUDIO_SERVICE);
 

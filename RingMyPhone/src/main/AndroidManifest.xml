@@ -4,6 +4,7 @@
     package="com.darkrockstudios.apps.ringmyphone">
 
     <uses-permission android:name="android.permission.WAKE_LOCK"/>
+    <uses-permission android:name="android.permission.ACCESS_NOTIFICATION_POLICY" />
 
     <application
         android:allowBackup="true"

@@ -28,6 +28,8 @@ public class MainActivity extends AppCompatActivity {
     private static final String ABOUT_FRAGMENT_TAG = "AboutFragment";
 
     @Override
+    // TODO(Noah): On app startup, ask user if they want to allow the app to work with Do Not
+    //             Disturb enabled, and send them to the appropriate settings screen if so
     protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         ActivityMainBinding binding = ActivityMainBinding.inflate(getLayoutInflater());
