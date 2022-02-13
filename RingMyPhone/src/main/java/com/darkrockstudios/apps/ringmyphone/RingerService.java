@@ -80,11 +80,11 @@ public class RingerService extends Service {
                         cmd = data.getUnsignedIntegerAsLong(CMD_KEY);
 
                         if (cmd == CMD_START) {
-                            Log.w(TAG, "Ring Command Received!");
+                            Log.i(TAG, "Ring Command Received");
                             setMaxVolume(this);
                             ringPhone(this, silentMode);
                         } else if (cmd == CMD_STOP) {
-                            Log.w(TAG, "Silence Command Received!");
+                            Log.i(TAG, "Silence Command Received");
                             silencePhone(this);
                         } else {
                             Log.w(TAG, "Bad command received from pebble app: " + cmd);
@@ -162,7 +162,9 @@ public class RingerService extends Service {
                 (AudioManager) context.getSystemService(Context.AUDIO_SERVICE);
 
         savedVolume = am.getStreamVolume(AudioManager.STREAM_RING);
+        Log.i(TAG, "Remembering current volume: " + savedVolume);
         savedRingerMode = am.getRingerMode();
+        Log.i(TAG, "Remembering current ringer mode: " + savedRingerMode);
 
         am.setStreamVolume(
                 AudioManager.STREAM_RING,
@@ -176,19 +178,23 @@ public class RingerService extends Service {
             AudioManager am =
                     (AudioManager) context.getSystemService(Context.AUDIO_SERVICE);
 
+            Log.i(TAG, "Restoring volume to " + savedVolume);
             am.setStreamVolume(AudioManager.STREAM_RING, savedVolume, 0);
+            Log.i(TAG, "Restoring ringer mode to " + savedRingerMode);
             am.setRingerMode(savedRingerMode);
             currentlyOverridingVolume = false;
+        } else {
+            Log.w(TAG, "Was not currently overriding the volume and ringer mode");
         }
     }
 
     private void silencePhone(final Context context) {
         if (ringtone != null) {
-            Log.w(TAG, "Silencing ringtone...");
+            Log.i(TAG, "Silencing ringtone...");
             ringtone.stop();
             ringtone = null;
         } else {
-            Log.w(TAG, "Ringtone was null, can't silence!");
+            Log.w(TAG, "Ringtone was null, can't silence");
         }
 
         restorePreviousVolume(context);

@@ -38,10 +38,10 @@ public class PebbleMessageReceiver extends WakefulBroadcastReceiver {
                 return;
             }
 
-            Log.w(TAG, "Sending ACK to Pebble. " + transactionId);
+            Log.d(TAG, "Sending ACK to Pebble: " + transactionId);
             PebbleKit.sendAckToPebble(context, transactionId);
 
-            Log.w(TAG, "Starting RingerService...");
+            Log.i(TAG, "Starting RingerService...");
             Intent serviceIntent = new Intent(context, RingerService.class);
             serviceIntent.putExtra(Constants.TRANSACTION_ID, transactionId);
             serviceIntent.putExtra(Constants.MSG_DATA, jsonData);
