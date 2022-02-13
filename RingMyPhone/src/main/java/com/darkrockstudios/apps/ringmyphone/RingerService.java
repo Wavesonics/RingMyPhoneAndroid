@@ -27,6 +27,8 @@ import com.getpebble.android.kit.util.PebbleDictionary;
 
 import org.json.JSONException;
 
+import java.util.Locale;
+
 /**
  * Created by Adam on 10/14/13.
  */
@@ -147,7 +149,6 @@ public class RingerService extends Service {
     }
 
     private void setMaxVolume() {
-        // TODO(Noah): If we cannot ring the phone because of DND mode, notify the watch app
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             int interruptionFilter = notificationManager.getCurrentInterruptionFilter();
             Log.d(TAG, "Current interruption filter: " + interruptionFilter);
@@ -216,6 +217,35 @@ public class RingerService extends Service {
     private void ringPhone(final Context context, final boolean silentMode) {
         getWakeLock();
 
+        int ringerMode = audioManager.getRingerMode();
+        int volume = audioManager.getStreamVolume(AudioManager.STREAM_RING);
+        double relativeVolume = (double) volume / audioManager.getStreamMaxVolume(AudioManager.STREAM_RING);
+        Log.d(TAG, String.format(Locale.ENGLISH, "ringerMode=%d relativeVolume=%f", ringerMode, relativeVolume));
+
+        if (!silentMode) {
+            // When testing on Android 12, I discovered that in Do Not Disturb mode, the ringer mode
+            // is always reported as RINGER_MODE_SILENT, even when it's actually set to VIBRATE or
+            // NORMAL and high-priority notifications are allowed through. As a result, we're only
+            // checking the ringer volume, not the ringer mode. The ringer volume gets temporarily
+            // set to 0 in the SILENT and VIBRATE ringer modes.
+
+            // We don't need to care about the case where we're not in Do Not Disturb mode, because
+            // if we're not in Do Not Disturb mode, then we were previously able to set the ringer
+            // mode and volume to how we want them (playing sound at max volume).
+
+            // I tried to implement falling back to alerting the user via vibration, but I couldn't
+            // get it to work from the background.
+
+            if (volume == 0) {
+                Log.w(TAG, "Notifications are muted, unable to play the ringtone");
+                // TODO(Noah): Inform the watch app that the phone screen is on but the ringtone is not playing
+            } else if (relativeVolume <= 0.5) {
+                Log.w(TAG, "Ringer volume is less than half of the maximum.");
+                // TODO(Noah): Inform the watch app that the phone volume is low.
+            }
+        }
+
+        // TODO(Noah): Use a different notification for silent mode
         postRingingNotification();
 
         if (!silentMode) {
