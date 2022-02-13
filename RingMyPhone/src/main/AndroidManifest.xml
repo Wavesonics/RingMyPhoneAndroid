@@ -12,7 +12,7 @@
         android:theme="@style/AppTheme">
         <meta-data
             android:name="com.google.android.backup.api_key"
-            android:value="AEdPqrEAAAAI9RVjjuoczaLcOvbT-BvIx_9BbnvfPjL3q6sedA"/>
+            android:value="unused"/>
 
         <activity
             android:name="com.darkrockstudios.apps.ringmyphone.MainActivity"

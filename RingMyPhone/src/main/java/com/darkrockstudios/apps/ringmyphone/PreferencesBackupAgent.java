@@ -6,7 +6,6 @@ import android.app.backup.SharedPreferencesBackupHelper;
 /**
  * Created by adam on 12/28/13.
  */
-// TODO(Noah): Check if I need to update this
 public class PreferencesBackupAgent extends BackupAgentHelper {
     private static final String TAG = PreferencesBackupAgent.class.getSimpleName();
 
