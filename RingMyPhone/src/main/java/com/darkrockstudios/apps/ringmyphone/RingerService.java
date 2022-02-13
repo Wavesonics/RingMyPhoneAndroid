@@ -55,6 +55,7 @@ public class RingerService extends Service {
 
     private PowerManager.WakeLock wakeLock;
     private Ringtone ringtone;
+    private boolean currentlyOverridingVolume = false;
     private int savedVolume;
     private int savedRingerMode;
 
@@ -167,14 +168,18 @@ public class RingerService extends Service {
                 AudioManager.STREAM_RING,
                 am.getStreamMaxVolume(AudioManager.STREAM_MUSIC),
                 0);
+        currentlyOverridingVolume = true;
     }
 
     private void restorePreviousVolume(final Context context) {
-        AudioManager am =
-                (AudioManager) context.getSystemService(Context.AUDIO_SERVICE);
+        if (currentlyOverridingVolume) {
+            AudioManager am =
+                    (AudioManager) context.getSystemService(Context.AUDIO_SERVICE);
 
-        am.setStreamVolume(AudioManager.STREAM_RING, savedVolume, 0);
-        am.setRingerMode(savedRingerMode);
+            am.setStreamVolume(AudioManager.STREAM_RING, savedVolume, 0);
+            am.setRingerMode(savedRingerMode);
+            currentlyOverridingVolume = false;
+        }
     }
 
     private void silencePhone(final Context context) {
