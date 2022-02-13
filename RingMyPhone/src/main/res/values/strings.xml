@@ -10,16 +10,13 @@
     <string name="stop_button_response">Stopping Ringer…</string>
     <string name="stop_description">If you lost your watch after ringing your phone, you can use this button to silence your phone</string>
     <string name="about_title">About</string>
-    <string name="about_body_header">Dark Rock Studios</string>
-    <string name="about_body_bio">Adam Brown (Wavesonics)</string>
-    <string name="about_body_email">darkrockstudios@gmail.com</string>
-    <string name="about_body_website">darkrockstudios.com</string>
-    <string name="about_body_market">Check out more of our apps:</string>
-    <string name="about_body_market_button">Google Play</string>
+    <string name="about_body_header">RingMyPhone</string>
+    <string name="about_body_adam">Adam Brown (Wavesonics)</string>
+    <string name="about_body_noah">Noah Andrews</string>
     <string name="about_body_open_source">RingMyPhone is Open Source!</string>
     <string name="about_body_github_android"><a href="http://github.com/Wavesonics/RingMyPhoneAndroid">RingMyPhoneAndroid</a></string>
     <string name="about_body_github_pebble"><a href="http://github.com/Wavesonics/RingMyPhonePebble">RingMyPhonePebble</a></string>
-    <string name="about_body_feedback"><i>Found a bug? Feature request?</i>\n<a href="https://github.com/Wavesonics/RingMyPhoneAndroid/issues/new">Log it here!</a></string>
+    <string name="about_body_feedback"><i>Found a bug? Feature request?</i>\n<a href="https://github.com/NoahAndrews/RingMyPhoneAndroid/issues/new">Log it here!</a></string>
     <string name="about_body_version">v%s</string>
 
     <string name="notification_ringing_ticker">RingMyPhone is ringing</string>

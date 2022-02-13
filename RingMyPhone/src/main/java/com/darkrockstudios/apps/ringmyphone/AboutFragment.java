@@ -4,12 +4,11 @@ import android.app.Activity;
 import android.app.Dialog;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.fragment.app.DialogFragment;
 
-import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
-import android.net.Uri;
 import android.os.Bundle;
 import android.text.method.LinkMovementMethod;
 import android.text.method.MovementMethod;
@@ -22,20 +21,17 @@ import com.darkrockstudios.apps.ringmyphone.databinding.FragmentAboutBinding;
 /**
  * Created by adam on 10/20/13.
  */
-public class AboutFragment extends DialogFragment implements View.OnClickListener {
-    private FragmentAboutBinding binding;
+public class AboutFragment extends DialogFragment {
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        binding = FragmentAboutBinding.inflate(inflater, container, false);
+        FragmentAboutBinding binding = FragmentAboutBinding.inflate(inflater, container, false);
         View view = binding.getRoot();
 
         Dialog dialog = getDialog();
         if (dialog != null) {
             dialog.setTitle(R.string.about_title);
         }
-
-        binding.marketButton.setOnClickListener(this);
 
         MovementMethod linkMovementMethod = LinkMovementMethod.getInstance();
 
@@ -54,11 +50,10 @@ public class AboutFragment extends DialogFragment implements View.OnClickListene
     }
 
     @Override
-    public void onClick(View v) {
-        if (v.getId() == binding.marketButton.getId() && isAdded()) {
-            Intent intent = new Intent(Intent.ACTION_VIEW);
-            intent.setData(Uri.parse("market://search?q=pub:Dark+Rock+Studios"));
-            startActivity(intent);
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        Dialog dialog = getDialog();
+        if (dialog != null) {
+            dialog.getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
         }
     }
 

@@ -22,42 +22,14 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceSmall"
-            android:text="@string/about_body_bio"/>
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:text="@string/about_body_adam"/>
+
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/about_body_email"
             android:textAppearance="?android:attr/textAppearanceMedium"
-            android:autoLink="email"/>
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/about_body_website"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            android:autoLink="web"/>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/about_fragment_spacing"
-            android:gravity="center_vertical">
-
-            <TextView
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:textAppearance="?android:attr/textAppearanceMedium"
-                android:text="@string/about_body_market"
-                android:id="@+id/textView2"
-                android:autoLink="web"
-                android:layout_weight="1"/>
-
-            <Button
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/about_body_market_button"
-                android:id="@+id/market_button"/>
-        </LinearLayout>
+            android:text="@string/about_body_noah"/>
 
         <TextView
             android:layout_width="wrap_content"
