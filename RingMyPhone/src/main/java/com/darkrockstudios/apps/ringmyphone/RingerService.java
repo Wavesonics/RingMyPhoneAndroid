@@ -1,13 +1,13 @@
 package com.darkrockstudios.apps.ringmyphone;
 
-import android.annotation.TargetApi;
+import android.annotation.SuppressLint;
+import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.graphics.drawable.BitmapDrawable;
 import android.media.AudioAttributes;
 import android.media.AudioManager;
 import android.media.Ringtone;
@@ -16,8 +16,10 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.IBinder;
 import android.os.PowerManager;
-import android.preference.PreferenceManager;
-import android.support.v4.app.NotificationCompat;
+
+import androidx.core.app.NotificationCompat;
+import androidx.preference.PreferenceManager;
+
 import android.util.Log;
 
 import com.getpebble.android.kit.Constants;
@@ -25,271 +27,264 @@ import com.getpebble.android.kit.util.PebbleDictionary;
 
 import org.json.JSONException;
 
+import java.util.Locale;
+
 /**
  * Created by Adam on 10/14/13.
  */
-public class RingerService extends Service
-{
-	private static final String TAG                 = RingerService.class.getSimpleName();
-	public static final  String ACTION_STOP_RINGING = RingerService.class.getName() + ".STOP_RINGING";
+public class RingerService extends Service {
+    private static final String TAG = RingerService.class.getSimpleName();
+    public static final String ACTION_STOP_RINGING = RingerService.class.getName() + ".STOP_RINGING";
+    private static final String RINGS_NOTIFICATION_CHANNEL = "ringsNotificationChannel";
 
-	private static final int CMD_KEY = 0x1;
+    private static final int CMD_KEY = 0x1;
 
-	private static final int CMD_START = 0x01;
-	private static final int CMD_STOP  = 0x02;
+    private static final int CMD_START = 0x01;
+    private static final int CMD_STOP = 0x02;
 
-	private PowerManager.WakeLock m_wakeLock;
-	private Ringtone              m_ringtone;
-	private int                   m_savedVolume;
+    public static void createNotificationChannels(Context context) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            CharSequence name = context.getString(R.string.notification_channel_rings_name);
+            int importance = NotificationManager.IMPORTANCE_HIGH;
+            NotificationChannel channel = new NotificationChannel(RINGS_NOTIFICATION_CHANNEL, name, importance);
+            channel.setSound(null, null);
+            // Register the channel with the system; you can't change the importance
+            // or other notification behaviors after this
+            NotificationManager notificationManager = context.getSystemService(NotificationManager.class);
+            notificationManager.createNotificationChannel(channel);
+        }
+    }
 
-	public IBinder onBind( final Intent intent )
-	{
-		return null;
-	}
+    private AudioManager audioManager;
+    private NotificationManager notificationManager;
+    private PowerManager powerManager;
+    private PowerManager.WakeLock wakeLock;
+    private Ringtone ringtone;
+    private boolean currentlyOverridingVolume = false;
+    private int savedVolume;
+    private int savedRingerMode;
 
-	@Override
-	public int onStartCommand( final Intent intent, final int flags, final int startId )
-	{
-		if( intent != null )
-		{
-			if( ACTION_STOP_RINGING.equals( intent.getAction() ) )
-			{
-				silencePhone( this );
-			}
-			else
-			{
-				if( Purchase.isActive( this ) )
-				{
-					SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences( this );
-					final boolean silentMode = settings.getBoolean( Preferences.KEY_SILENT_MODE, false );
+    public IBinder onBind(final Intent intent) {
+        return null;
+    }
 
-					final int transactionId = intent.getIntExtra( Constants.TRANSACTION_ID, -1 );
-					final String jsonData = intent.getStringExtra( Constants.MSG_DATA );
+    @Override public void onCreate() {
+        audioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
+        notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+        powerManager = (PowerManager) getSystemService(Context.POWER_SERVICE);
+    }
 
-					if( jsonData != null )
-					{
-						try
-						{
-							final long cmd;
-							final PebbleDictionary data = PebbleDictionary.fromJson( jsonData );
-							if( data != null )
-							{
-								cmd = data.getUnsignedIntegerAsLong( CMD_KEY );
-							}
-							else
-							{
-								cmd = -1;
-							}
+    @Override
+    public int onStartCommand(final Intent intent, final int flags, final int startId) {
+        if (intent != null) {
+            if (ACTION_STOP_RINGING.equals(intent.getAction())) {
+                silencePhone(this);
+            } else {
+                SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this);
+                final boolean silentMode = settings.getBoolean(Preferences.KEY_SILENT_MODE, false);
+                final String jsonData = intent.getStringExtra(Constants.MSG_DATA);
 
-							if( cmd == CMD_START )
-							{
-								Log.w( TAG, "Ring Command Received!" );
-								setMaxVolume( this );
-								ringPhone( this, silentMode );
-							}
-							else if( cmd == CMD_STOP )
-							{
-								Log.w( TAG, "Silence Command Received!" );
-								silencePhone( this );
-							}
-							else
-							{
-								Log.w( TAG, "Bad command received from pebble app: " + cmd );
-							}
-						}
-						catch( final JSONException e )
-						{
-							Log.w( TAG, "failed retrieved -> dict" + e );
-						}
-					}
-					else
-					{
-						Log.w( TAG, "No data from Pebble" );
-					}
-				}
-				else
-				{
-					postExpiredNotification();
-				}
-			}
-		}
+                if (jsonData != null) {
+                    try {
+                        final long cmd;
+                        final PebbleDictionary data = PebbleDictionary.fromJson(jsonData);
+                        cmd = data.getUnsignedIntegerAsLong(CMD_KEY);
 
-		return START_NOT_STICKY;
-	}
+                        if (cmd == CMD_START) {
+                            Log.i(TAG, "Ring Command Received");
+                            setMaxVolume();
+                            ringPhone(this, silentMode);
+                        } else if (cmd == CMD_STOP) {
+                            Log.i(TAG, "Silence Command Received");
+                            silencePhone(this);
+                        } else {
+                            Log.w(TAG, "Bad command received from pebble app: " + cmd);
+                        }
+                    } catch (final JSONException e) {
+                        Log.w(TAG, "failed retrieved -> dict" + e);
+                    }
+                } else {
+                    Log.w(TAG, "No data from Pebble");
+                }
+            }
+        }
 
-	private void dismissRingingNotification()
-	{
-		NotificationManager notificationManager = (NotificationManager) getSystemService( Context.NOTIFICATION_SERVICE );
-		notificationManager.cancel( NotificationId.RINGING );
-	}
+        return START_NOT_STICKY;
+    }
 
-	private void postRingingNotification()
-	{
-		NotificationCompat.Builder builder = new NotificationCompat.Builder( this );
-		builder.setTicker( getString( R.string.notification_ringing_ticker ) );
-		builder.setContentTitle( getString( R.string.notification_ringing_ticker ) );
-		builder.setContentText( getString( R.string.notification_ringing_text ) );
-		builder.setSmallIcon( R.drawable.ic_action_volume_up );
+    private void dismissRingingNotification() {
+        notificationManager.cancel(NotificationId.RINGING);
+    }
 
-		builder.setContentIntent( createStopRingingIntent() );
-		builder.setOngoing( true );
+    @SuppressLint("LaunchActivityFromNotification")
+    private void postRingingNotification() {
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(this, RINGS_NOTIFICATION_CHANNEL);
+        builder.setTicker(getString(R.string.notification_ringing_ticker));
+        builder.setContentTitle(getString(R.string.notification_ringing_ticker));
+        builder.setContentText(getString(R.string.notification_ringing_text));
+        builder.setSmallIcon(R.drawable.ic_action_volume_up);
+        builder.setSound(null);
 
-		NotificationManager notificationManager = (NotificationManager) getSystemService( Context.NOTIFICATION_SERVICE );
-		notificationManager.notify( NotificationId.RINGING, builder.build() );
-	}
+        builder.setContentIntent(createStopRingingIntent());
+        builder.setOngoing(true);
 
-	private void postExpiredNotification()
-	{
-		NotificationCompat.Builder builder = new NotificationCompat.Builder( this );
-		builder.setTicker( getString( R.string.notification_expired_ticker ) );
-		builder.setContentTitle( getString( R.string.notification_expired_ticker ) );
-		builder.setContentText( getString( R.string.notification_expired_text ) );
-		builder.setSmallIcon( R.drawable.ic_stat_clock );
+        notificationManager.notify(NotificationId.RINGING, builder.build());
+    }
 
-		BitmapDrawable largeIcon = (BitmapDrawable) getResources().getDrawable( R.drawable.ic_launcher );
-		builder.setLargeIcon( largeIcon.getBitmap() );
-		builder.setContentIntent( createDefaultIntent() );
+    private PendingIntent createStopRingingIntent() {
+        Intent intent = new Intent(ACTION_STOP_RINGING);
+        int flags = PendingIntent.FLAG_UPDATE_CURRENT;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            flags |= PendingIntent.FLAG_IMMUTABLE;
+        }
 
-		builder.setAutoCancel( true );
-		NotificationCompat.BigTextStyle bigStyle = new NotificationCompat.BigTextStyle();
-		bigStyle.bigText( getString( R.string.notification_expired_text ) );
-		builder.setStyle( bigStyle );
+        return PendingIntent.getBroadcast(this, 0, intent, flags);
+    }
 
-		builder.addAction( R.drawable.ic_notification_lock_open, getString( R.string.notification_expired_purchase_button ),
-		                   createPurchaseIntent() );
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
 
-		NotificationManager notificationManager = (NotificationManager) getSystemService( Context.NOTIFICATION_SERVICE );
-		notificationManager.notify( NotificationId.TRIAL_EXPIRED, builder.build() );
-	}
+        silencePhone(this);
+    }
 
-	private PendingIntent createStopRingingIntent()
-	{
-		Intent intent = new Intent( ACTION_STOP_RINGING );
+    private void setMaxVolume() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            int interruptionFilter = notificationManager.getCurrentInterruptionFilter();
+            Log.d(TAG, "Current interruption filter: " + interruptionFilter);
+            if (interruptionFilter != NotificationManager.INTERRUPTION_FILTER_ALL) {
+                Log.i(TAG, "Detected Do Not Disturb mode");
+                if (notificationManager.isNotificationPolicyAccessGranted()) {
+                    Log.i(TAG, "We have permission to override Do Not Disturb mode");
+                } else {
+                    Log.i(TAG, "We do not have permission to override Do Not Disturb mode. "
+                            + "Leaving the volume as-is.");
+                    return;
+                }
+            }
+        }
 
-		PendingIntent pendingIntent = PendingIntent.getBroadcast( this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT );
-		return pendingIntent;
-	}
 
-	private PendingIntent createDefaultIntent()
-	{
-		Intent intent = new Intent( this, MainActivity.class );
+        // If the current ringer mode is RINGER_MODE_VIBRATE, then the ring volume will be
+        // remembered as 0, which is not correct. To get the user's real ringer volume, we set
+        // the ringer mode to RINGER_MODE_NORMAL first, and only then look up the ring volume.
+        // Tested on Android 12.
 
-		PendingIntent pendingIntent = PendingIntent.getActivity( this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT );
-		return pendingIntent;
-	}
+        savedRingerMode = audioManager.getRingerMode();
+        Log.i(TAG, "Remembering current ringer mode: " + savedRingerMode);
 
-	private PendingIntent createPurchaseIntent()
-	{
-		Intent intent = new Intent( this, MainActivity.class );
-		intent.setData( Purchase.PURCHASE_URI );
+        audioManager.setRingerMode(AudioManager.RINGER_MODE_NORMAL);
 
-		PendingIntent pendingIntent = PendingIntent.getActivity( this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT );
-		return pendingIntent;
-	}
+        savedVolume = audioManager.getStreamVolume(AudioManager.STREAM_RING);
+        Log.i(TAG, "Remembering current volume: " + savedVolume);
 
-	@Override
-	public void onDestroy()
-	{
-		super.onDestroy();
+        audioManager.setStreamVolume(
+                AudioManager.STREAM_RING,
+                audioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC),
+                0);
+        currentlyOverridingVolume = true;
+    }
 
-		silencePhone( this );
-	}
+    private void restorePreviousVolume(final Context context) {
+        if (currentlyOverridingVolume) {
+            Log.i(TAG, "Restoring volume to " + savedVolume);
+            audioManager.setStreamVolume(AudioManager.STREAM_RING, savedVolume, 0);
 
-	private void setMaxVolume( final Context context )
-	{
-		AudioManager am =
-				(AudioManager) context.getSystemService( Context.AUDIO_SERVICE );
+            Log.i(TAG, "Restoring ringer mode to " + savedRingerMode);
+            audioManager.setRingerMode(savedRingerMode);
+            currentlyOverridingVolume = false;
+        } else {
+            Log.w(TAG, "Was not currently overriding the volume and ringer mode");
+        }
+    }
 
-		m_savedVolume = am.getStreamVolume( AudioManager.STREAM_RING );
+    private void silencePhone(final Context context) {
+        if (ringtone != null) {
+            Log.i(TAG, "Silencing ringtone...");
+            ringtone.stop();
+            ringtone = null;
+        } else {
+            Log.w(TAG, "Ringtone was null, can't silence");
+        }
 
-		am.setStreamVolume(
-				                  AudioManager.STREAM_RING,
-				                  am.getStreamMaxVolume( AudioManager.STREAM_MUSIC ),
-				                  0 );
-	}
+        restorePreviousVolume(context);
 
-	private void restorePreviousVolume( final Context context )
-	{
-		AudioManager am =
-				(AudioManager) context.getSystemService( Context.AUDIO_SERVICE );
+        dismissRingingNotification();
 
-		am.setStreamVolume( AudioManager.STREAM_RING, m_savedVolume, 0 );
-		m_savedVolume = -1;
-	}
+        releaseWakeLock();
+    }
 
-	private void silencePhone( final Context context )
-	{
-		if( m_ringtone != null )
-		{
-			Log.w( TAG, "Silencing ringtone..." );
-			m_ringtone.stop();
-			m_ringtone = null;
-		}
-		else
-		{
-			Log.w( TAG, "Ringtone was null, can't silence!" );
-		}
+    private void ringPhone(final Context context, final boolean silentMode) {
+        getWakeLock();
 
-		restorePreviousVolume( context );
+        int ringerMode = audioManager.getRingerMode();
+        int volume = audioManager.getStreamVolume(AudioManager.STREAM_RING);
+        double relativeVolume = (double) volume / audioManager.getStreamMaxVolume(AudioManager.STREAM_RING);
+        Log.d(TAG, String.format(Locale.ENGLISH, "ringerMode=%d relativeVolume=%f", ringerMode, relativeVolume));
 
-		dismissRingingNotification();
+        if (!silentMode) {
+            // When testing on Android 12, I discovered that in Do Not Disturb mode, the ringer mode
+            // is always reported as RINGER_MODE_SILENT, even when it's actually set to VIBRATE or
+            // NORMAL and high-priority notifications are allowed through. As a result, we're only
+            // checking the ringer volume, not the ringer mode. The ringer volume gets temporarily
+            // set to 0 in the SILENT and VIBRATE ringer modes.
 
-		releaseWakeLock( context );
-	}
+            // We don't need to care about the case where we're not in Do Not Disturb mode, because
+            // if we're not in Do Not Disturb mode, then we were previously able to set the ringer
+            // mode and volume to how we want them (playing sound at max volume).
 
-	@TargetApi(Build.VERSION_CODES.LOLLIPOP)
-	private void ringPhone( final Context context, final boolean silentMode )
-	{
-		getWakeLock( context );
+            // I tried to implement falling back to alerting the user via vibration, but I couldn't
+            // get it to work from the background.
 
-		postRingingNotification();
+            if (volume == 0) {
+                Log.w(TAG, "Notifications are muted, unable to play the ringtone");
+                // TODO(Noah): Inform the watch app that the phone screen is on but the ringtone is not playing
+            } else if (relativeVolume <= 0.5) {
+                Log.w(TAG, "Ringer volume is less than half of the maximum.");
+                // TODO(Noah): Inform the watch app that the phone volume is low.
+            }
+        }
 
-		if( m_ringtone == null )
-		{
-			Uri notification = RingtoneManager.getDefaultUri( RingtoneManager.TYPE_RINGTONE );
-			m_ringtone = RingtoneManager.getRingtone( context, notification );
-		}
+        // TODO(Noah): Use a different notification for silent mode
+        postRingingNotification();
 
-		if( m_ringtone != null && !m_ringtone.isPlaying() && !silentMode )
-		{
-			if( OsUtil.atLeastLollipop() )
-			{
-				AudioAttributes audioAttributes = new AudioAttributes.Builder()
-						                                  .setUsage( AudioAttributes.USAGE_NOTIFICATION_RINGTONE )
-						                                  .setContentType( AudioAttributes.CONTENT_TYPE_SONIFICATION )
-						                                  .setFlags( AudioAttributes.FLAG_AUDIBILITY_ENFORCED )
-						                                  .build();
-				m_ringtone.setAudioAttributes( audioAttributes );
-			}
-			else
-			{
-				m_ringtone.setStreamType( AudioManager.STREAM_RING );
-			}
-			m_ringtone.play();
-		}
-	}
+        if (!silentMode) {
+            if (ringtone == null) {
+                Uri notification = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_RINGTONE);
+                ringtone = RingtoneManager.getRingtone(context, notification);
+            }
 
-	private void getWakeLock( final Context context )
-	{
-		if( m_wakeLock == null )
-		{
-			PowerManager pm = (PowerManager) context.getSystemService( Context.POWER_SERVICE );
-			m_wakeLock = pm.newWakeLock( PowerManager.FULL_WAKE_LOCK |
-			                             PowerManager.ACQUIRE_CAUSES_WAKEUP, TAG );
-			m_wakeLock.acquire();
-		}
-	}
+            if (ringtone != null && !ringtone.isPlaying()) {
+                if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
+                    AudioAttributes audioAttributes = new AudioAttributes.Builder()
+                            .setUsage(AudioAttributes.USAGE_NOTIFICATION_RINGTONE)
+                            .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
+                            .setFlags(AudioAttributes.FLAG_AUDIBILITY_ENFORCED)
+                            .build();
+                    ringtone.setAudioAttributes(audioAttributes);
+                } else {
+                    ringtone.setStreamType(AudioManager.STREAM_RING);
+                }
+                ringtone.play();
+            }
+        }
+    }
 
-	private void releaseWakeLock( final Context context )
-	{
-		if( m_wakeLock != null )
-		{
-			if( m_wakeLock.isHeld() )
-			{
-				m_wakeLock.release();
-			}
+    private void getWakeLock() {
+        if (wakeLock == null) {
+            wakeLock = powerManager.newWakeLock(PowerManager.FULL_WAKE_LOCK |
+                    PowerManager.ACQUIRE_CAUSES_WAKEUP, TAG);
+            wakeLock.acquire(5 * 60 * 1000L /* 5 minutes */);
+        }
+    }
 
-			m_wakeLock = null;
-		}
-	}
+    private void releaseWakeLock() {
+        if (wakeLock != null) {
+            if (wakeLock.isHeld()) {
+                wakeLock.release();
+            }
+
+            wakeLock = null;
+        }
+    }
 }

@@ -15,49 +15,22 @@
             android:layout_height="wrap_content"
             android:textAppearance="?android:attr/textAppearanceLarge"
             android:text="@string/about_body_header"
-            android:layout_gravity="left|center_vertical"
+            android:layout_gravity="start|center_vertical"
             android:linksClickable="true"
-            android:textStyle="bold"/>
+            android:textStyle="bold"
+            android:layout_marginBottom="@dimen/about_fragment_spacing" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceSmall"
-            android:text="@string/about_body_bio"/>
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/about_body_email"
             android:textAppearance="?android:attr/textAppearanceMedium"
-            android:autoLink="email"/>
+            android:text="@string/about_body_adam"/>
+
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/about_body_website"
             android:textAppearance="?android:attr/textAppearanceMedium"
-            android:autoLink="web"/>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/about_fragment_spacing"
-            android:gravity="center_vertical">
-
-            <TextView
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:textAppearance="?android:attr/textAppearanceMedium"
-                android:text="@string/about_body_market"
-                android:id="@+id/textView2"
-                android:autoLink="web"
-                android:layout_weight="1"/>
-
-            <Button
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/about_body_market_button"
-                android:id="@+id/ABOUT_market_button"/>
-        </LinearLayout>
+            android:text="@string/about_body_noah"/>
 
         <TextView
             android:layout_width="wrap_content"
@@ -75,20 +48,22 @@
             <ImageView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:id="@+id/ABOUT_github_logo"
-                android:src="@drawable/github"/>
+                android:id="@+id/github_logo"
+                android:src="@drawable/github"
+                tools:ignore="ContentDescription" />
 
             <TableLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:gravity="center_vertical"
-                android:layout_toRightOf="@id/ABOUT_github_logo"
-                android:layout_alignBottom="@+id/ABOUT_github_logo"
-                android:layout_alignTop="@id/ABOUT_github_logo"
+                android:layout_toRightOf="@id/github_logo"
+                android:layout_toEndOf="@id/github_logo"
+                android:layout_alignBottom="@+id/github_logo"
+                android:layout_alignTop="@id/github_logo"
                 android:showDividers="middle">
 
                 <TextView
-                    android:id="@+id/ABOUT_github_android"
+                    android:id="@+id/github_android"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
                     android:textAppearance="?android:attr/textAppearanceMedium"
@@ -98,7 +73,7 @@
                     android:gravity="center_vertical"/>
 
                 <TextView
-                    android:id="@+id/ABOUT_github_pebble"
+                    android:id="@+id/github_pebble"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
                     android:textAppearance="?android:attr/textAppearanceMedium"
@@ -112,7 +87,7 @@
         </RelativeLayout>
 
         <TextView
-            android:id="@+id/ABOUT_feedback"
+            android:id="@+id/feedback"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/about_fragment_spacing"
@@ -121,12 +96,12 @@
             android:linksClickable="true"/>
 
         <TextView
-            android:id="@+id/ABOUT_app_version"
+            android:id="@+id/app_version"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/about_fragment_spacing"
             android:textAppearance="?android:attr/textAppearanceSmall"
-            android:layout_gravity="right"
+            android:layout_gravity="end"
             tools:text="v1.0"/>
 
     </LinearLayout>

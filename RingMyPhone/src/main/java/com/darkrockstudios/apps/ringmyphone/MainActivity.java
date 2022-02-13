@@ -1,10 +1,10 @@
 package com.darkrockstudios.apps.ringmyphone;
 
-import android.content.BroadcastReceiver;
-import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.os.Bundle;
+
+import androidx.appcompat.app.AppCompatActivity;
+
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -12,74 +12,42 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
-import android.widget.ListView;
-import android.widget.TextView;
+
+import com.darkrockstudios.apps.ringmyphone.databinding.ActivityMainBinding;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 
-import butterknife.ButterKnife;
-import butterknife.InjectView;
 import de.keyboardsurfer.android.widget.crouton.Configuration;
 import de.keyboardsurfer.android.widget.crouton.Crouton;
 import de.keyboardsurfer.android.widget.crouton.Style;
 
-public class MainActivity extends BillingActivity implements BillingActivity.ProStatusListener {
+// TODO(Noah): Add button to send user to Rebble store (if possible)
+public class MainActivity extends AppCompatActivity {
     private static final String TAG = MainActivity.class.getSimpleName();
     private static final String ABOUT_FRAGMENT_TAG = "AboutFragment";
 
-    private boolean m_showPurchaseDialog;
-
-    @InjectView(R.id.listView)
-    ListView m_listView;
-
-    private MenuAdapter m_menuAdapter;
-    private TimeReceiver m_timeReceiver;
-
     @Override
+    // TODO(Noah): On app startup, ask user if they want to allow the app to work with Do Not
+    //             Disturb enabled, and send them to the appropriate settings screen if so
     protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-        ButterKnife.inject(this);
-
-        setProStatusListener(this);
-
-        m_menuAdapter = new MenuAdapter();
-        m_listView.setAdapter(m_menuAdapter);
-
-        handleIntent(getIntent());
-    }
-
-    @Override
-    protected void onNewIntent(final Intent intent) {
-        handleIntent(intent);
-    }
-
-    private void handleIntent(final Intent intent) {
-        if (intent != null) {
-            if (Purchase.PURCHASE_URI.equals(intent.getData())) {
-                m_showPurchaseDialog = true;
-            }
-        }
+        ActivityMainBinding binding = ActivityMainBinding.inflate(getLayoutInflater());
+        View view = binding.getRoot();
+        setContentView(view);
+        MenuAdapter menuAdapter = new MenuAdapter();
+        binding.listView.setAdapter(menuAdapter);
+        RingerService.createNotificationChannels(this);
     }
 
     @Override
     protected void onStart() {
         super.onStart();
-
-        m_timeReceiver = new TimeReceiver();
-        IntentFilter intentFilter = new IntentFilter(Intent.ACTION_TIME_TICK);
-        registerReceiver(m_timeReceiver, intentFilter);
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-
-        if (m_showPurchaseDialog && purchasePro()) {
-            m_showPurchaseDialog = false;
-        }
     }
 
     @Override
@@ -92,36 +60,27 @@ public class MainActivity extends BillingActivity implements BillingActivity.Pro
     @Override
     protected void onStop() {
         super.onStop();
-
-        unregisterReceiver(m_timeReceiver);
-        m_timeReceiver = null;
     }
 
     @Override
     public boolean onOptionsItemSelected(final MenuItem item) {
         final boolean handled;
-        // Handle item selection
-        switch (item.getItemId()) {
-            case R.id.action_about:
-                showAbout();
-                handled = true;
-                break;
-            case R.id.action_settings: {
-                Intent intent = new Intent(this, SettingsActivity.class);
-                startActivity(intent);
-                handled = true;
-            }
-            break;
-            default:
-                handled = super.onOptionsItemSelected(item);
+        if (item.getItemId() == R.id.action_about) {
+            showAbout();
+            handled = true;
+        } else if (item.getItemId() == R.id.action_settings) {
+            Intent intent = new Intent(this, SettingsActivity.class);
+            startActivity(intent);
+            handled = true;
+        } else {
+            handled = super.onOptionsItemSelected(item);
         }
-
         return handled;
     }
 
     private void showAbout() {
         AboutFragment aboutFragment = new AboutFragment();
-        aboutFragment.show(getFragmentManager(), ABOUT_FRAGMENT_TAG);
+        aboutFragment.show(getSupportFragmentManager(), ABOUT_FRAGMENT_TAG);
     }
 
     public void onStopClicked(final View v) {
@@ -130,60 +89,27 @@ public class MainActivity extends BillingActivity implements BillingActivity.Pro
         stopService(new Intent(this, RingerService.class));
     }
 
-    public void onPurchaseClicked(final View v) {
-        Log.i(TAG, "Purchasing App");
-
-        purchasePro();
-    }
-
-    @Override
-    public void onProStatusUpdate(final boolean isPro) {
-        m_menuAdapter.refresh();
-    }
-
-    protected void onBillingServiceConnected() {
-        if (m_showPurchaseDialog) {
-            m_showPurchaseDialog = !purchasePro();
-        }
-    }
-
     enum MenuItemType {
         Welcome,
-        Purchase,
         Stop
     }
 
-    private class TimeReceiver extends BroadcastReceiver {
-        @Override
-        public void onReceive(final Context context, final Intent intent) {
-            if (!isPro()) {
-                m_menuAdapter.refresh();
-            }
-        }
-    }
-
     class MenuAdapter extends BaseAdapter {
-        private List<MenuItemType> m_menuItems;
+        final private List<MenuItemType> menuItems;
 
         public MenuAdapter() {
-            m_menuItems = new ArrayList<>();
+            menuItems = new ArrayList<>();
             refresh();
         }
 
         public void refresh() {
-            runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    m_menuItems.clear();
+            runOnUiThread(() -> {
+                menuItems.clear();
 
-                    m_menuItems.add(MenuItemType.Welcome);
-                    if (!isPro()) {
-                        m_menuItems.add(MenuItemType.Purchase);
-                    }
-                    m_menuItems.add(MenuItemType.Stop);
+                menuItems.add(MenuItemType.Welcome);
+                menuItems.add(MenuItemType.Stop);
 
-                    notifyDataSetChanged();
-                }
+                notifyDataSetChanged();
             });
         }
 
@@ -196,12 +122,12 @@ public class MainActivity extends BillingActivity implements BillingActivity.Pro
         }
 
         public int getCount() {
-            return m_menuItems.size();
+            return menuItems.size();
         }
 
         @Override
         public Object getItem(final int position) {
-            return m_menuItems.get(position);
+            return menuItems.get(position);
         }
 
         @Override
@@ -224,9 +150,6 @@ public class MainActivity extends BillingActivity implements BillingActivity.Pro
                     case Stop:
                         view = inflater.inflate(R.layout.row_stop_ringing, parent, false);
                         break;
-                    case Purchase:
-                        view = inflater.inflate(R.layout.row_purchase, parent, false);
-                        break;
                     default:
                         view = null;
                         break;
@@ -235,29 +158,7 @@ public class MainActivity extends BillingActivity implements BillingActivity.Pro
                 view = convertView;
             }
 
-            if (type == MenuItemType.Purchase) {
-                setCountDown((TextView) view.findViewById(R.id.purchase_app_count_down));
-            }
-
             return view;
-        }
-
-        private void setCountDown(final TextView countDownView) {
-            long timeRemaining = Purchase.trialTimeRemaining(MainActivity.this);
-
-            if (timeRemaining > 0) {
-                final long days = TimeUnit.MILLISECONDS.toDays(timeRemaining);
-                timeRemaining -= TimeUnit.DAYS.toMillis(days);
-
-                final long hours = TimeUnit.MILLISECONDS.toHours(timeRemaining);
-                timeRemaining -= TimeUnit.HOURS.toMillis(hours);
-
-                final long minutes = TimeUnit.MILLISECONDS.toMinutes(timeRemaining);
-
-                countDownView.setText(getString(R.string.purchase_app_countdown, days, hours, minutes));
-            } else {
-                countDownView.setText(getString(R.string.purchase_app_countdown_expired));
-            }
         }
 
         @Override
