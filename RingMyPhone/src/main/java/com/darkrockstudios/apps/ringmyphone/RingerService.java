@@ -29,7 +29,6 @@ import org.json.JSONException;
 /**
  * Created by Adam on 10/14/13.
  */
-// TODO(Noah): Restore vibration mode and ringer volume
 // TODO(Noah): Prevent notification sound when starting ring
 public class RingerService extends Service
 {
@@ -57,6 +56,7 @@ public class RingerService extends Service
 	private PowerManager.WakeLock wakeLock;
 	private Ringtone ringtone;
 	private int savedVolume;
+	private int savedRingerMode;
 
 	public IBinder onBind(final Intent intent )
 	{
@@ -164,6 +164,7 @@ public class RingerService extends Service
 				(AudioManager) context.getSystemService( Context.AUDIO_SERVICE );
 
 		savedVolume = am.getStreamVolume( AudioManager.STREAM_RING );
+		savedRingerMode = am.getRingerMode();
 
 		am.setStreamVolume(
 				                  AudioManager.STREAM_RING,
@@ -177,7 +178,7 @@ public class RingerService extends Service
 				(AudioManager) context.getSystemService( Context.AUDIO_SERVICE );
 
 		am.setStreamVolume( AudioManager.STREAM_RING, savedVolume, 0 );
-		savedVolume = -1;
+		am.setRingerMode(savedRingerMode);
 	}
 
 	private void silencePhone( final Context context )
