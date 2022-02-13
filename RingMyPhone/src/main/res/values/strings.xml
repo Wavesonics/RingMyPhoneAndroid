@@ -8,7 +8,7 @@
     <string name="welcome_body">Install the watch app from the Pebble app store if you haven’t already. Then, you can close this app and use your Pebble to start your phone ringing.</string>
     <string name="stop_button">Stop Ringing!</string>
     <string name="stop_button_response">Stopping Ringer…</string>
-    <string name="stop_description">Maybe you lost your watch after ringing your phone, maybe other things, use this to silence your phone!</string>
+    <string name="stop_description">If you lost your watch after ringing your phone, you can use this button to silence your phone</string>
     <string name="about_title">About</string>
     <string name="about_body_header">Dark Rock Studios</string>
     <string name="about_body_bio">Adam Brown (Wavesonics)</string>
