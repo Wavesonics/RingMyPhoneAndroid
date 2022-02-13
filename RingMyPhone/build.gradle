@@ -72,6 +72,7 @@ dependencies {
     implementation 'androidx.legacy:legacy-support-v13:1.0.0'
     implementation 'com.google.guava:guava:31.0.1-android'
     implementation 'com.getpebble:pebblekit:3.0.0@aar'
+    // TODO(Noah): Switch to snackbar
     implementation('de.keyboardsurfer.android.widget:crouton:1.8.5@aar') {
         exclude group: 'com.google.android', module: 'support-v4'
     }

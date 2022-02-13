@@ -29,6 +29,7 @@ import org.json.JSONException;
 /**
  * Created by Adam on 10/14/13.
  */
+// TODO(Noah): Restore vibration mode and ringer volume
 public class RingerService extends Service
 {
 	private static final String TAG                 = RingerService.class.getSimpleName();
