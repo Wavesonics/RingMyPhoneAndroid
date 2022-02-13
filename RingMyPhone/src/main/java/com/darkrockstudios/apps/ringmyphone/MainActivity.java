@@ -20,6 +20,7 @@ import de.keyboardsurfer.android.widget.crouton.Configuration;
 import de.keyboardsurfer.android.widget.crouton.Crouton;
 import de.keyboardsurfer.android.widget.crouton.Style;
 
+// TODO(Noah): Add button to send user to Rebble store (if possible)
 public class MainActivity extends AppCompatActivity {
     private static final String TAG = MainActivity.class.getSimpleName();
     private static final String ABOUT_FRAGMENT_TAG = "AboutFragment";
