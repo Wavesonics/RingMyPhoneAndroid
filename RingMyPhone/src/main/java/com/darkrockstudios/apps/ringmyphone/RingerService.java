@@ -161,12 +161,20 @@ public class RingerService extends Service {
         AudioManager am =
                 (AudioManager) context.getSystemService(Context.AUDIO_SERVICE);
 
-        savedVolume = am.getStreamVolume(AudioManager.STREAM_RING);
-        Log.i(TAG, "Remembering current volume: " + savedVolume);
+        // If the current ringer mode is RINGER_MODE_VIBRATE, then the ring volume will be
+        // remembered as 0, which is not correct. To get the user's real ringer volume, we set
+        // the ringer mode to RINGER_MODE_NORMAL first, and only then look up the ring volume.
+        // Tested on Android 12.
+
         savedRingerMode = am.getRingerMode();
         Log.i(TAG, "Remembering current ringer mode: " + savedRingerMode);
 
-        am.setStreamVolume(
+        am.setRingerMode(AudioManager.RINGER_MODE_NORMAL);
+
+        savedVolume = am.getStreamVolume(AudioManager.STREAM_RING);
+        Log.i(TAG, "Remembering current volume: " + savedVolume);
+
+        audioManager.setStreamVolume(
                 AudioManager.STREAM_RING,
                 am.getStreamMaxVolume(AudioManager.STREAM_MUSIC),
                 0);
