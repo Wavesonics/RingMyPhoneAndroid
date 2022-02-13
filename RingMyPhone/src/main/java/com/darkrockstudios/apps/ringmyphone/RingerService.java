@@ -29,7 +29,6 @@ import org.json.JSONException;
 /**
  * Created by Adam on 10/14/13.
  */
-// TODO(Noah): Prevent notification sound when starting ring
 public class RingerService extends Service
 {
 	private static final String TAG                 = RingerService.class.getSimpleName();
@@ -46,6 +45,7 @@ public class RingerService extends Service
 			CharSequence name = context.getString(R.string.notification_channel_rings_name);
 			int importance = NotificationManager.IMPORTANCE_HIGH;
 			NotificationChannel channel = new NotificationChannel(RINGS_NOTIFICATION_CHANNEL, name, importance);
+			channel.setSound(null, null);
 			// Register the channel with the system; you can't change the importance
 			// or other notification behaviors after this
 			NotificationManager notificationManager = context.getSystemService(NotificationManager.class);
@@ -131,6 +131,7 @@ public class RingerService extends Service
 		builder.setContentTitle( getString( R.string.notification_ringing_ticker ) );
 		builder.setContentText( getString( R.string.notification_ringing_text ) );
 		builder.setSmallIcon( R.drawable.ic_action_volume_up );
+		builder.setSound(null);
 
 		builder.setContentIntent( createStopRingingIntent() );
 		builder.setOngoing( true );
