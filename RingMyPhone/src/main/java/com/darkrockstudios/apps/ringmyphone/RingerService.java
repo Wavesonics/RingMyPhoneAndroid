@@ -54,9 +54,9 @@ public class RingerService extends Service
 		}
 	}
 
-	private PowerManager.WakeLock m_wakeLock;
-	private Ringtone              m_ringtone;
-	private int                   m_savedVolume;
+	private PowerManager.WakeLock wakeLock;
+	private Ringtone ringtone;
+	private int savedVolume;
 
 	public IBinder onBind(final Intent intent )
 	{
@@ -163,7 +163,7 @@ public class RingerService extends Service
 		AudioManager am =
 				(AudioManager) context.getSystemService( Context.AUDIO_SERVICE );
 
-		m_savedVolume = am.getStreamVolume( AudioManager.STREAM_RING );
+		savedVolume = am.getStreamVolume( AudioManager.STREAM_RING );
 
 		am.setStreamVolume(
 				                  AudioManager.STREAM_RING,
@@ -176,17 +176,17 @@ public class RingerService extends Service
 		AudioManager am =
 				(AudioManager) context.getSystemService( Context.AUDIO_SERVICE );
 
-		am.setStreamVolume( AudioManager.STREAM_RING, m_savedVolume, 0 );
-		m_savedVolume = -1;
+		am.setStreamVolume( AudioManager.STREAM_RING, savedVolume, 0 );
+		savedVolume = -1;
 	}
 
 	private void silencePhone( final Context context )
 	{
-		if( m_ringtone != null )
+		if( ringtone != null )
 		{
 			Log.w( TAG, "Silencing ringtone..." );
-			m_ringtone.stop();
-			m_ringtone = null;
+			ringtone.stop();
+			ringtone = null;
 		}
 		else
 		{
@@ -206,13 +206,13 @@ public class RingerService extends Service
 
 		postRingingNotification();
 
-		if( m_ringtone == null )
+		if( ringtone == null )
 		{
 			Uri notification = RingtoneManager.getDefaultUri( RingtoneManager.TYPE_RINGTONE );
-			m_ringtone = RingtoneManager.getRingtone( context, notification );
+			ringtone = RingtoneManager.getRingtone( context, notification );
 		}
 
-		if( m_ringtone != null && !m_ringtone.isPlaying() && !silentMode )
+		if( ringtone != null && !ringtone.isPlaying() && !silentMode )
 		{
 			if( android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP )
 			{
@@ -221,37 +221,37 @@ public class RingerService extends Service
 						                                  .setContentType( AudioAttributes.CONTENT_TYPE_SONIFICATION )
 						                                  .setFlags( AudioAttributes.FLAG_AUDIBILITY_ENFORCED )
 						                                  .build();
-				m_ringtone.setAudioAttributes( audioAttributes );
+				ringtone.setAudioAttributes( audioAttributes );
 			}
 			else
 			{
-				m_ringtone.setStreamType( AudioManager.STREAM_RING );
+				ringtone.setStreamType( AudioManager.STREAM_RING );
 			}
-			m_ringtone.play();
+			ringtone.play();
 		}
 	}
 
 	private void getWakeLock( final Context context )
 	{
-		if( m_wakeLock == null )
+		if( wakeLock == null )
 		{
 			PowerManager pm = (PowerManager) context.getSystemService( Context.POWER_SERVICE );
-			m_wakeLock = pm.newWakeLock( PowerManager.FULL_WAKE_LOCK |
+			wakeLock = pm.newWakeLock( PowerManager.FULL_WAKE_LOCK |
 			                             PowerManager.ACQUIRE_CAUSES_WAKEUP, TAG );
-			m_wakeLock.acquire(5 * 60 * 1000L /* 5 minutes */);
+			wakeLock.acquire(5 * 60 * 1000L /* 5 minutes */);
 		}
 	}
 
 	private void releaseWakeLock()
 	{
-		if( m_wakeLock != null )
+		if( wakeLock != null )
 		{
-			if( m_wakeLock.isHeld() )
+			if( wakeLock.isHeld() )
 			{
-				m_wakeLock.release();
+				wakeLock.release();
 			}
 
-			m_wakeLock = null;
+			wakeLock = null;
 		}
 	}
 }
