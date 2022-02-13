@@ -33,8 +33,8 @@ public class MainActivity extends AppCompatActivity {
         ActivityMainBinding binding = ActivityMainBinding.inflate(getLayoutInflater());
         View view = binding.getRoot();
         setContentView(view);
-        MenuAdapter m_menuAdapter = new MenuAdapter();
-        binding.listView.setAdapter(m_menuAdapter);
+        MenuAdapter menuAdapter = new MenuAdapter();
+        binding.listView.setAdapter(menuAdapter);
         RingerService.createNotificationChannels(this);
     }
 
@@ -93,19 +93,19 @@ public class MainActivity extends AppCompatActivity {
     }
 
     class MenuAdapter extends BaseAdapter {
-        final private List<MenuItemType> m_menuItems;
+        final private List<MenuItemType> menuItems;
 
         public MenuAdapter() {
-            m_menuItems = new ArrayList<>();
+            menuItems = new ArrayList<>();
             refresh();
         }
 
         public void refresh() {
             runOnUiThread(() -> {
-                m_menuItems.clear();
+                menuItems.clear();
 
-                m_menuItems.add(MenuItemType.Welcome);
-                m_menuItems.add(MenuItemType.Stop);
+                menuItems.add(MenuItemType.Welcome);
+                menuItems.add(MenuItemType.Stop);
 
                 notifyDataSetChanged();
             });
@@ -120,12 +120,12 @@ public class MainActivity extends AppCompatActivity {
         }
 
         public int getCount() {
-            return m_menuItems.size();
+            return menuItems.size();
         }
 
         @Override
         public Object getItem(final int position) {
-            return m_menuItems.get(position);
+            return menuItems.get(position);
         }
 
         @Override
